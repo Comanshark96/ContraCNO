@@ -90,11 +90,9 @@ class CrearCentro(CreateView):
         usuario = self.request.user.integrante
         centro = form.save(commit=False)
 
-        if usuario.es_supervisor:
-            centro.equipo = usuario.equipo_supervisado
-        else:
-            centro.equipo = usuario.unidad.equipo
-        centro.save()
+        if not usuario.es_supervisor:
+            centro.centro = usuario.unidad
+            centro.save()
 
         return redirect(reverse_lazy('ListaCentros'))
 
