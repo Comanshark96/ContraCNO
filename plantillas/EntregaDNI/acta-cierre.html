@@ -1,0 +1,30 @@
+{% extends 'EntregaDNI/base.html' %}
+
+{% block 'TituloContenido' %}Acta de cierre <small>al {{ fecha }}</small>{% endblock %}
+{% block 'Titulo' %}Acta de cierre{% endblock %}
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table table-hover">
+      <thead>
+	<tr class="text-center">
+	  <th>Caja</th>
+	  <th>Apertura</th>
+	  <th>Entregados</th>
+	  <th>Cierre</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for resultado in resultados %}
+	<tr class="text-center">
+	  <td>{{ resultado.caja }}</td>
+	  <td>{{ resultado.apertura }}</td>
+	  <td>{{ resultado.entregadas }}</td>
+	  <td>{{ resultado.cierre }}</td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

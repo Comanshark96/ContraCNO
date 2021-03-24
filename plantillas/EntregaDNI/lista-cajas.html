@@ -1,0 +1,42 @@
+{% extends 'EntregaDNI/base.html' %}
+
+{% block 'TituloContenido' %}Lista de cajas <small>del {{ user.equipo.get.nombre }}</small>{% endblock %}
+{% block 'Titulo' %}Lista de cajas{% endblock %}
+
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card card-outline card-orange">
+      <div class="card-footer">
+	<a href="{% url 'EscanerCaja' %}" class="btn btn-success btn-block"><i class="fas fa-plus-circle"></i> Registrar cajas</a>
+      </div>
+      <div class="card-body table-responsive">
+	<table class="table table-hover">
+	  <thead>
+	    <tr>
+	      <th>Código</th>
+	      <th>Centro</th>
+	      <th>Cantidad inicial</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {% for caja in object_list %}
+	    <tr>
+	      <td>{{ caja.codigo }}</td>
+	      <td>{{ caja.centro.nombre }}</td>
+	      <td>{{ caja.cantidad }}</td>
+	    </tr>
+	    {% empty %}
+	    <div class="alert alert-info">
+	      <h5><i class="fa fa-exclamation-triangle"></i> No hay cajas registradas</h5>
+	      <p>No se encuentran cajas registradas en el sistema</p>
+	    </div>
+	    {% endfor %}
+	  </tbody>
+	</table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

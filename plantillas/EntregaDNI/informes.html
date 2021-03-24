@@ -1,0 +1,44 @@
+{% extends 'EntregaDNI/base.html' %}
+{% load staticfiles %}
+
+{% block 'Titulo' %}Informes{% endblock %}
+{% block 'TituloContenido' %}Informes{% endblock %}
+
+{% block 'Contenido' %}
+<div class="row d-flex 	align-items-stretch">
+  <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3>Acta de cierre</h3>
+      </div>
+      <div class="card-body">
+	<p>Muestra las entregas por día de cada caja</p>
+	<form id="FormActaCierre" class="form-group" action="{% url 'ActaCierre' %}">
+	  <div class="input-group date" id="fecha" data-target-input="nearest">
+	    <input class="form-control datetimepicker-input" name="fecha" type="text" data-target="#fecha" required>
+	    <div class="input-group-append" data-target="#fecha" data-toggle="datetimepicker">
+	      <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+	    </div>
+	  </div>
+	</form>
+      </div>
+      <div class="card-footer">
+	<button class="btn btn-block btn-primary" form="FormActaCierre">Solicitar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block 'OtrosEstilos' %}
+<link rel="stylesheet" href="{% static 'plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css' %}">
+{% endblock %}
+{% block 'OtrosGuiones' %}
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<script src="{% static 'plugins/daterangepicker/daterangepicker.js"></script>
+<script>
+  $('#fecha').datetimepicker({
+    format: 'DD/MM/yyyy'
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'EntregaDNI/base.html' %}
+
+{% block 'TituloContenido' %}Crear/Editar centro de entrega{% endblock %}
+
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card card-outline card-orange">
+      <div class="card-body">
+	<form action="" method="POST" enctype="multipart/form-data">
+	  {% csrf_token %}
+	  <div class="form-group">
+	    <label for="id_nombre">Nombre del centro:</label>
+	    {{ form.nombre }}
+	    {% if form.errors.nombre %}<span class="text-sm text-danger">{{ form.errors.nombre }}</span>{% endif %}
+	  </div>
+	  <button class="btn btn-success btn-block" type="submit">Guardar</button>
+	</form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

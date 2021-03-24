@@ -1,0 +1,75 @@
+{% extends 'EntregaDNI/base.html' %}
+{% load staticfiles %}
+
+{% block 'TituloContenido' %}Registrar sobre de DNI{% endblock %}
+{% block 'Titulo' %}Registrar sobre de DNI{% endblock %}
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-12">
+   {% if form.errors %}
+  <div class="alert alert-danger">
+    <h3><i class="fas fa-ban"></i> Error: Hubo algunos errores en el escaneo.</h3>
+    <ul>
+      {{ form.errors }}
+    </ul>
+  </div>
+  {% endif %}
+ </div>
+</div>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="card card-outline card-orange">
+      <div class="card-body">
+	<div class="img-fluid" id="escaner"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-8">
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+        <h3 class="card-title">Registro de caja</h3>
+      </div>
+      <div class="card-body">
+	<form id="FormSobre" action="" enctype="multipart/data-form" method="POST">
+	  {% csrf_token %}
+	  <div class="form-group">
+	    <div class="input-group">
+	      {{ form.codigo }}
+	      <div class="input-group-append">
+	        <button type="button" class="input-group-text" onclick="editarCodigoSobre()"><i class="fas fa-edit"></i></button>
+	      </div>
+	    </div>
+	  </div>
+	  {% if form.errors.codigo %}<span class="text-sm text-danger">{{ form.errors.codigo }}</span>{% endif %}
+	    <div class="form-group">
+	      <div class="input-group">
+		{{ form.caja }}
+	        <div class="input-group-append"><button type="button" class="input-group-text" onclick="editarCodigoCaja()"><i class="fas fa-edit"></i></button></div>
+	      </div>
+	    {% if form.errors.caja %}<span class="text-sm text-danger">{{ form.errors.caja }}</span>{% endif %}
+	    </div>
+	</form>
+      </div>
+      <div class="card-footer"><button class="btn btn-success btn-block" type="submit" form="FormSobre">Registrar</button></div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'plugins/html5-qrcode/html5-qrcode.min.js' %}"></script>
+<script>
+  // Editar código
+  const editarCodigoSobre = () => $('#id_codigo').removeAttr('readonly');
+  const editarCodigoCaja = () => $('#id_caja').removeAttr('readonly');
+  // Funciones de proceso de QR
+  const scanSuccess = (qrmessage) => {
+    codigo_sobre = qrmessage.substring(0, 9);
+    codigo_caja = qrmessage.substring(9);
+
+    $('#id_codigo').val(codigo_sobre);
+    $('#id_caja').val(codigo_caja);
+  }
+  const scanFailure = (error) => console.log(error);
+
+  let escaner = new Html5QrcodeScanner("escaner", {fps:30}, false);
+  escaner.render(scanSuccess, scanFailure);
+</script>
+{% endblock %}
