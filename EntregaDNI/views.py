@@ -148,7 +148,7 @@ class Informes(TemplateView):
         formulario = forms.FormActaCierre()
 
         if usuario.es_supervisor:
-            formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.equipo)
+            formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.equipo_supervisado)
         else:
             formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.unidad.equipo)
 
