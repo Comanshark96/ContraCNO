@@ -66,3 +66,18 @@ class FormSobre(forms.ModelForm):
             raise forms.ValidationError('No se encuentra la caja en el sistema')
         
         return cod_caja
+
+
+class FormActaCierre(forms.ModelForm):
+
+    fecha = forms.DateField(required=True, widget=forms.DateInput(attrs={'class':'form-control datetimepicker',
+                                                          'placeholder': 'Fecha de consulta',
+                                                          'data-target': '#fecha'}))
+
+    class Meta:
+        model = models.Centro
+        fields = ('unidad',)
+        widgets = {
+                'unidad': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Escoja una unidad'})
+            }
+

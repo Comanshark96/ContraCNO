@@ -21,6 +21,7 @@ from EntregaDNI import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', login_required(views.inicio), name='Inicio'),
     path('ingreso', Ingreso.as_view(), name='Ingreso'),
     path('cierre', login_required(LogoutView.as_view()), name='Cierre'),
     path('escaner-caja', login_required(views.EscanerCaja.as_view()), name='EscanerCaja'),

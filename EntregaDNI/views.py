@@ -3,10 +3,13 @@ from django.http import Http404, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, TemplateView, ListView, UpdateView, FormView
+from django.views.generic import CreateView, TemplateView, ListView, UpdateView
 from . import models, forms
 
 
+def inicio(request, *args, **kwargs):
+    return redirect(reverse_lazy('ListaCentros'))
+    
 class EscanerCaja(CreateView):
 
     model = models.Caja
@@ -103,7 +106,20 @@ class EscanerSobre(CreateView):
     model = models.Sobre
     form_class = forms.FormSobre
     template_name = 'EntregaDNI/escaner-sobre.html'
-    success_url = reverse_lazy('EscanerSobre')
+
+    def get_success_url(self):
+        return reverse_lazy('EscanerSobre') + '?exito'
+
+    def form_valid(self, form):
+        sobre = form.save(commit=False)
+        existe_sobre = bool(models.Sobre.objects.filter(codigo=sobre.codigo, caja=sobre.caja))
+
+        if existe_sobre:
+            return redirect(reverse_lazy('EscanerSobre'))
+        else:
+            sobre.save()
+            return redirect(self.get_success_url())
+
 
 class ListaSobres(ListView):
     """ Lista los sobres escaneados """
@@ -125,6 +141,21 @@ class Informes(TemplateView):
 
     template_name = 'EntregaDNI/informes.html'
 
+    def get_context_data(self, **kwargs):
+        usuario = self.request.user.integrante
+        contexto = super().get_context_data(**kwargs)
+
+        formulario = forms.FormActaCierre()
+
+        if usuario.es_supervisor:
+            formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.equipo)
+        else:
+            formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.unidad.equipo)
+
+        contexto['form'] = formulario
+        
+        return contexto
+
 class ActaCierre(TemplateView):
 
     template_name = 'EntregaDNI/acta-cierre.html'
@@ -132,21 +163,25 @@ class ActaCierre(TemplateView):
     def get_context_data(self, **kwargs):
         usuario = self.request.user.integrante
         contexto = super().get_context_data(**kwargs)
-        fecha = datetime.datetime.strptime(self.request.GET['fecha'], '%d/%m/%Y')
-        cajas = None
-        resultados = [] 
+        formulario = forms.FormActaCierre(self.request.GET)
 
-        if usuario.es_supervisor:
-            cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.equipo_supervisado)
-        else:
-            cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.unidad.equipo)
+        if formulario.is_valid():
+            unidad = formulario.cleaned_data['unidad']
+            fecha = formulario.cleaned_data['fecha']
+            cajas = None
+            resultados = [] 
 
-        for caja in cajas:
-            apertura = caja.cantidad - caja.sobre.filter(fecha__lt=fecha).count()
-            entregadas = caja.sobre.filter(fecha=fecha).count()
-            resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': apertura - entregadas})
+            if usuario.es_supervisor:
+                cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.equipo_supervisado, centro__unidad=unidad)
+            else:
+                cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.unidad.equipo, centro__unidad=unidad)
 
-        contexto['resultados'] = resultados
-        contexto['fecha'] = fecha
+            for caja in cajas:
+                apertura = caja.cantidad - caja.sobre.filter(fecha__lt=fecha).count()
+                entregadas = caja.sobre.filter(fecha=fecha).count()
+                resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': apertura - entregadas})
+
+            contexto['resultados'] = resultados
+            contexto['fecha'] = fecha
 
         return contexto

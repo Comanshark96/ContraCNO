@@ -13,13 +13,18 @@
       </div>
       <div class="card-body">
 	<p>Muestra las entregas por día de cada caja</p>
-	<form id="FormActaCierre" class="form-group" action="{% url 'ActaCierre' %}">
-	  <div class="input-group date" id="fecha" data-target-input="nearest">
-	    <input class="form-control datetimepicker-input" name="fecha" type="text" data-target="#fecha" required>
-	    <div class="input-group-append" data-target="#fecha" data-toggle="datetimepicker">
-	      <span class="input-group-text"><i class="fas fa-calendar"></i></span>
-	    </div>
+	<form id="FormActaCierre" action="{% url 'ActaCierre' %}">
+	  <div class="form-group">
+	    {{ form.unidad }}
 	  </div>
+	  <div class="form-group">
+	     <div class="input-group date" id="fecha" data-target-input="nearest">
+		{{ form.fecha }}
+		<div class="input-group-append" data-target="#fecha" data-toggle="datetimepicker">
+		  <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+		</div>
+	      </div>
+	    </div>
 	</form>
       </div>
       <div class="card-footer">

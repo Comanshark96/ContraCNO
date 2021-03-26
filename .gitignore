@@ -179,6 +179,7 @@ tags
 [._]*.un~
 
 */migrations/*.py
+populate_daya.py
 
 # End of https://www.toptal.com/developers/gitignore/api/django,vim
 
