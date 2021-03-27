@@ -5,26 +5,40 @@
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-12">
-    <table class="table table-hover responsive-table">
-      <thead>
-	<tr class="text-center">
-	  <th>Caja</th>
-	  <th>Apertura</th>
-	  <th>Entregados</th>
-	  <th>Cierre</th>
-	</tr>
-      </thead>
-      <tbody>
-	{% for resultado in resultados %}
-	<tr class="text-center">
-	  <td>{{ resultado.caja }}</td>
-	  <td>{{ resultado.apertura }}</td>
-	  <td>{{ resultado.entregadas }}</td>
-	  <td>{{ resultado.cierre }}</td>
-	</tr>
-	{% endfor %}
-      </tbody>
-    </table>
+    <div class="card card-outline card-orange">
+      <div class="card-header justify-content-between">
+	<h3>{{ unidad }}</h3>
+	<a class="btn btn-default float-right" href="{% url 'ActaCierreImprimir' %}?unidad={{request.GET.unidad}}&fecha={{request.GET.fecha}}"><i class="fas fa-print"></i> Imprimir</a>
+      </div>
+      <div class="card-body">
+	<table class="table table-hover responsive-table">
+	  <thead>
+	    <tr class="text-center">
+	      <th>Caja</th>
+	      <th>Apertura</th>
+	      <th>Entregados</th>
+	      <th>Cierre</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr class="text-center font-weight-bold">
+	      <td></td>
+	      <td>Total:</td>
+	      <td>{{ total_entregadas }}</td>
+	      <td>{{ total_cierre }}</td>
+	    </tr>
+	    {% for resultado in resultados %}
+	    <tr class="text-center">
+	      <td>{{ resultado.caja }}</td>
+	      <td>{{ resultado.apertura }}</td>
+	      <td>{{ resultado.entregadas }}</td>
+	      <td>{{ resultado.cierre }}</td>
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

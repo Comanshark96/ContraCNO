@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView, ListView, UpdateView
+from django.views.decorators.cache import never_cache 
+from django.utils.decorators import method_decorator
 from . import models, forms
 
 
@@ -156,6 +158,7 @@ class Informes(TemplateView):
         
         return contexto
 
+@method_decorator(never_cache, 'dispatch')
 class ActaCierre(TemplateView):
 
     template_name = 'EntregaDNI/acta-cierre.html'
@@ -164,12 +167,15 @@ class ActaCierre(TemplateView):
         usuario = self.request.user.integrante
         contexto = super().get_context_data(**kwargs)
         formulario = forms.FormActaCierre(self.request.GET)
+        total = 0
 
         if formulario.is_valid():
             unidad = formulario.cleaned_data['unidad']
             fecha = formulario.cleaned_data['fecha']
             cajas = None
             resultados = [] 
+            total_entregadas = 0
+            total_cierre = 0
 
             if usuario.es_supervisor:
                 cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.equipo_supervisado, centro__unidad=unidad)
@@ -179,9 +185,19 @@ class ActaCierre(TemplateView):
             for caja in cajas:
                 apertura = caja.cantidad - caja.sobre.filter(fecha__lt=fecha).count()
                 entregadas = caja.sobre.filter(fecha=fecha).count()
-                resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': apertura - entregadas})
+                cierre = apertura - entregadas
+                total_entregadas += entregadas
+                total_cierre += cierre
+                resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': cierre})
 
             contexto['resultados'] = resultados
             contexto['fecha'] = fecha
+            contexto['total_entregadas'] = total_entregadas
+            contexto['total_cierre'] = total_cierre
+            contexto['unidad'] = unidad
 
         return contexto
+
+class ActaCierreImprimir(ActaCierre):
+
+    template_name = 'EntregaDNI/acta-cierre-print.html'
