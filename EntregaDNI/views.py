@@ -208,4 +208,6 @@ class ActaCierreImprimir(ActaCierre):
 
         contexto['resultados_letras'] = len(contexto['resultados'])
         contexto['total_entregadas_letras'] = numero_a_letras(contexto['total_entregadas'])
+
+        return contexto
         contexto['total_cierre_letras'] = numero_a_letras(contexto['total_cierre'])
