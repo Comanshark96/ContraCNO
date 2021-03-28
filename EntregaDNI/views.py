@@ -192,9 +192,11 @@ class ActaCierre(TemplateView):
                 resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': cierre})
 
             contexto['resultados'] = resultados
+            contexto['resultados_letras'] = numero_a_letras(len(resultados))
             contexto['fecha'] = fecha
             contexto['total_entregadas'] = total_entregadas
             contexto['total_cierre'] = total_cierre
+            contexto['total_cierre_letras'] = numero_a_letras(total_cierre)
             contexto['unidad'] = unidad
 
         return contexto
@@ -202,12 +204,3 @@ class ActaCierre(TemplateView):
 class ActaCierreImprimir(ActaCierre):
 
     template_name = 'EntregaDNI/acta-cierre-print.html'
-
-    def get_context_data(self, **kwargs):
-        contexto = super().get_context_data(**kwargs)
-
-        contexto['resultados_letras'] = len(contexto['resultados'])
-        contexto['total_entregadas_letras'] = numero_a_letras(contexto['total_entregadas'])
-
-        return contexto
-        contexto['total_cierre_letras'] = numero_a_letras(contexto['total_cierre'])
