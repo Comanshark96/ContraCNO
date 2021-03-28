@@ -206,6 +206,6 @@ class ActaCierreImprimir(ActaCierre):
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
 
-        contexto['resultados_letras'] = len(context['resultados'])
+        contexto['resultados_letras'] = len(contexto['resultados'])
         contexto['total_entregadas_letras'] = numero_a_letras(contexto['total_entregadas'])
         contexto['total_cierre_letras'] = numero_a_letras(contexto['total_cierre'])
