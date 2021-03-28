@@ -1,14 +1,17 @@
 {% extends 'EntregaDNI/base.html' %}
 
-{% block 'TituloContenido' %}Acta de cierre <small>al {{ fecha }}</small>{% endblock %}
-{% block 'Titulo' %}Acta de cierre{% endblock %}
+{% block 'TituloContenido' %}Informe diario <small>al {{ fecha }}</small>{% endblock %}
+{% block 'Titulo' %}Informe diario{% endblock %}
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-12">
     <div class="card card-outline card-orange">
       <div class="card-header justify-content-between">
 	<h3>{{ unidad }}</h3>
-	<a class="btn btn-default float-right" href="{% url 'ActaCierreImprimir' %}?unidad={{request.GET.unidad}}&fecha={{request.GET.fecha}}"><i class="fas fa-print"></i> Imprimir</a>
+	{% with unidad=request.GET.unidad fecha=request.GET.fecha %}
+	<a class="btn btn-default float-right ml-1" href="{% url 'ActaCierreImprimir' %}?unidad={{ unidad }}&fecha={{ fecha }}"><i class="fas fa-print"></i> Cierre</a>
+	<a class="btn btn-default float-right" href="{% url 'ActaAperturaImprimir' %}?unidad={{ unidad }}&fecha={{ fecha }}"><i class="fas fa-print"></i> Apertura</a>
+	{% endwith %}
       </div>
       <div class="card-body">
 	<table class="table table-hover responsive-table">

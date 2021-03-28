@@ -1,0 +1,30 @@
+{% extends 'EntregaDNI/acta-cierre-print.html' %}
+
+{% block 'Tabla' %}
+<table class="table table-bordered mb-0">
+  <thead>
+    <tr class="text-center">
+      <th>Código de caja</th>
+      <th>Cant. DNI</th>
+      <th>Cant. DNI en letras</th>
+      <th style:"width: 500px">Observaciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for resultado in resultados %}
+    <tr class="text-center">
+      <td>{{ resultado.caja }}</td>
+      <td>{{ resultado.apertura }}</td>
+      <td>{{ resultado.apertura_letras | title }}</td>
+      <td></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+{% block 'Total' %}
+{{ total_apertura }}
+{% endblock %}
+{% block 'TotalLetras' %}
+{{ total_apertura_letras | title }}
+{% endblock %}

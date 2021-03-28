@@ -45,7 +45,6 @@ class ListaCajas(ListView):
         else:
             return self.model.objects.filter(centro__unidad__equipo=usuario.unidad.equipo)
 
-
 class ListaCentros(ListView):
     """ Lista los centros de entrega en una tabla """
 
@@ -175,6 +174,7 @@ class ActaCierre(TemplateView):
             fecha = formulario.cleaned_data['fecha']
             cajas = None
             resultados = [] 
+            total_apertura = 0
             total_entregadas = 0
             total_cierre = 0
 
@@ -187,12 +187,16 @@ class ActaCierre(TemplateView):
                 apertura = caja.cantidad - caja.sobre.filter(fecha__lt=fecha).count()
                 entregadas = caja.sobre.filter(fecha=fecha).count()
                 cierre = apertura - entregadas
+                total_apertura += apertura
                 total_entregadas += entregadas
                 total_cierre += cierre
-                resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': cierre})
+                resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': cierre,
+                    'apertura_letras': numero_a_letras(apertura), 'cierre_letras': numero_a_letras(cierre)})
 
             contexto['resultados'] = resultados
             contexto['resultados_letras'] = numero_a_letras(len(resultados))
+            contexto['total_apertura'] = total_apertura
+            contexto['total_apertura_letras'] = numero_a_letras(total_apertura)
             contexto['fecha'] = fecha
             contexto['total_entregadas'] = total_entregadas
             contexto['total_cierre'] = total_cierre
@@ -204,3 +208,8 @@ class ActaCierre(TemplateView):
 class ActaCierreImprimir(ActaCierre):
 
     template_name = 'EntregaDNI/acta-cierre-print.html'
+
+
+class ActaAperturaImprimir(ActaCierre):
+
+    template_name = 'EntregaDNI/acta-apertura-print.html'

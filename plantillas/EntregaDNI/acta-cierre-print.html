@@ -41,7 +41,7 @@
 	  <span class="border border-top-0 border-left-0 border-right-0">Distrito Central</span>
 	</p>
 	<p class="mb-1">
-	  <span class="font-weight-bold">No. de UMEs por centro de entrega:</span> <span class="border border-top-0 border-left-0 border-right-0">2</span> </p> <p> <span class="font-weight-bold">Fecha:</span>
+	<span class="font-weight-bold">No. de UMEs por centro de entrega:</span> <span class="border border-top-0 border-left-0 border-right-0">{{ unidad.numero }}</span> </p> <p> <span class="font-weight-bold">Fecha:</span>
 	  <span class="border border-top-0 border-left-0 border-right-0">{{ fecha }}</span>
 	</p>
       </div>
@@ -53,6 +53,7 @@
     <!-- Table row -->
     <div class="row">
       <div class="col-12">
+	{% block 'Tabla' %}
         <table class="table table-bordered mb-0">
           <thead>
           <tr class="text-center">
@@ -75,6 +76,7 @@
 	  {% endfor %}
           </tbody>
         </table>
+	{% endblock %}
 	<div class="border mt-0 pt-0">
 	  <div class="row" style="font-size: 11px">
 	    <div class="col-12">
@@ -84,11 +86,19 @@
 	  <div class="row" style="font-size: 11px">
 	    <div class="col-6">
 	      <p><span class="font-weight-bold">Cajas:</span> {{ resultados | length }}</p>
-	      <p><span class="font-weight-bold">Cantidad en letras:</span>{{ resultados_letras }}</p>
+	      <p><span class="font-weight-bold">Cantidad en letras:</span> {{ resultados_letras | title }}</p>
 	    </div>
 	    <div class="col-6">
-	      <p><span class="font-weight-bold">Cant. DNI:</span> {{ total_cierre }}</p>
-	      <p><span class="font-weight-bold">Cantidad en letras:</span>{{ total_cierre_letras }}</p>
+	      <p><span class="font-weight-bold">Cant. DNI:</span>
+		{% block 'Total' %}
+		{{ total_cierre }}
+		{% endblock %}
+	      </p>
+	      <p><span class="font-weight-bold">Cantidad en letras:</span>
+		{% block 'TotalLetras' %}
+		{{ total_cierre_letras | title }}
+		{% endblock %}
+	      </p>
 	    </div>
 	  </div>
 	</div>
@@ -110,7 +120,7 @@
     <!-- /.row -->
     <div class="row">
       <div class="col-12">
-	<p class="font-weight-bold">Técnicos enroladores responsables:</p>
+	<p class="font-weight-bold" style="margin-bottom:50px">Técnicos enroladores responsables:</p>
       </div>
     </div>
     <div class="row d-flex">
@@ -118,7 +128,7 @@
       <div class="col-6 d-flex mb-3">
 	<div>
 	  <p class="mb-1">Firma y huella del dedo índice: <span class="border border-top-0 border-left-0 border-right-0"></span></p>
-	  <p class="mb-1">Nombre: <span class="border border-top-0 border-left-0 border-right-0">{{ enrolador.usuario.get_full_name }}</span></p>
+	  <p class="mb-1">NOMBRE T.E. QUE RECIBE: <span class="border border-top-0 border-left-0 border-right-0">{{ enrolador.usuario.get_full_name }}</span></p>
 	  <p>DNI: <span class="border border-top-0 border-left-0 border-right-0">{{ enrolador.usuario.username }}</span></p>
 	</div>
       </div>

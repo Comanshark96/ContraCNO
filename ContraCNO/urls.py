@@ -33,5 +33,6 @@ urlpatterns = [
     path('sobres', login_required(views.ListaSobres.as_view()), name='ListaSobres'),
     path('acta-cierre', login_required(views.ActaCierre.as_view()), name='ActaCierre'),
     path('acta-cierre/imprimir', login_required(views.ActaCierreImprimir.as_view()), name='ActaCierreImprimir'),
+    path('acta-apertura/imprimir', login_required(views.ActaAperturaImprimir.as_view()), name='ActaAperturaImprimir'),
     path('informes', login_required(views.Informes.as_view()), name='Informes'),
 ]
