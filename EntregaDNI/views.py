@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView, ListView, UpdateView
 from django.views.decorators.cache import never_cache 
 from django.utils.decorators import method_decorator
+from .numero_letras import numero_a_letras
 from . import models, forms
 
 
@@ -201,3 +202,10 @@ class ActaCierre(TemplateView):
 class ActaCierreImprimir(ActaCierre):
 
     template_name = 'EntregaDNI/acta-cierre-print.html'
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+
+        contexto['resultados_letras'] = len(context['resultados'])
+        contexto['total_entregadas_letras'] = numero_a_letras(contexto['total_entregadas'])
+        contexto['total_cierre_letras'] = numero_a_letras(contexto['total_cierre'])
