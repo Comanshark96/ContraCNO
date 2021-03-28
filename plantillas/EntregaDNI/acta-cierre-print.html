@@ -1,0 +1,137 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acta de cierre | ContraCNO</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+</head>
+<body>
+<div class="wrapper">
+  <!-- Main content -->
+  <section class="invoice border border-0">
+    <!-- title row -->
+    <div class="row">
+      <div class="col-12 text-center d-flex justify-content-between">
+	<img class="float-left" src="{% static 'identificate.png' %}" alt="" style="width:200px">
+        <h5 class="page-header font-weight-bold text-md">
+	  Proyecto de Modernización de Documento Nacional de Identificación "Identifícate"</br>
+	  UNIDAD DE ENROLAMIENTO</br>
+	  ACTA DE ENTREGA DIARIA DE DNI</br>
+	  SUPERVISORES A TÉCNICOS ENROLADORES POR UNIDAD DE ENTREGA</br>
+        </h5>
+	<img class="float-right" src="{% static 'RNP.png' %}" alt="" style="width:150px">
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- info row -->
+    <div class="row invoice-info mt-5">
+      <div class="col-sm-12 invoice-col">
+	<p class="mb-1">
+	  <span class="font-weight-bold">Departamento</span>:
+	  <span class="border border-top-0 border-left-0 border-right-0">Francisco Morazán
+	</p>
+	<p class="mb-1">
+	  <span class="font-weight-bold">Municipio:</span>
+	  <span class="border border-top-0 border-left-0 border-right-0">Distrito Central</span>
+	</p>
+	<p class="mb-1">
+	  <span class="font-weight-bold">No. de UMEs por centro de entrega:</span> <span class="border border-top-0 border-left-0 border-right-0">2</span> </p> <p> <span class="font-weight-bold">Fecha:</span>
+	  <span class="border border-top-0 border-left-0 border-right-0">{{ fecha }}</span>
+	</p>
+      </div>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <!-- Table row -->
+    <div class="row">
+      <div class="col-12">
+        <table class="table table-bordered mb-0">
+          <thead>
+          <tr class="text-center">
+            <th>Código de caja</th>
+            <th>Cant. DNI en apertura</th>
+            <th>Cant. DNI entregado</th>
+            <th>Cant. DNI sobrante en apertura</th>
+            <th style="width: 500px">Observaciones</th>
+          </tr>
+          </thead>
+          <tbody>
+	  {% for resultado in resultados %}
+          <tr class="text-center">
+	    <td>{{ resultado.caja }}</td>
+	    <td>{{ resultado.apertura }}</td>
+	    <td>{{ resultado.entregadas }}</td>
+	    <td>{{ resultado.cierre }}</td>
+            <td></td>
+          </tr>
+	  {% endfor %}
+          </tbody>
+        </table>
+	<div class="border mt-0 pt-0">
+	  <div class="row" style="font-size: 11px">
+	    <div class="col-12">
+	      <p class="font-weight-bold">CANTIDAD TOTAL AL CIERRE</p>
+	    </div>
+	  </div>
+	  <div class="row" style="font-size: 11px">
+	    <div class="col-6">
+	      <p><span class="font-weight-bold">Cajas:</span> {{ resultados | length }}</p>
+	      <p><span class="font-weight-bold">Cantidad en letras:</span></p>
+	    </div>
+	    <div class="col-6">
+	      <p><span class="font-weight-bold">Cant. DNI:</span> {{ total_cierre }}</p>
+	      <p><span class="font-weight-bold">Cantidad en letras:</span></p>
+	    </div>
+	  </div>
+	</div>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <div class="row mt-4">
+      <div class="col-12">
+	<p class="font-weight-bold">Supervisor</p>
+	<div>
+	  <p class="mb-1">Firma y huella del dedo índice: <span class="border border-top-0 border-left-0 border-right-0"></span></p>
+	  <p class="mb-1">Nombre: <span class="border border-top-0 border-left-0 border-right-0">{{ unidad.equipo.supervisor.usuario.get_full_name}}</span></p>
+	  <p>DNI: <span class="border border-top-0 border-left-0 border-right-0">{{ unidad.equipo.supervisor.usuario.username}}</span></p>
+	</div>
+      </div>
+    </div>
+    <!-- /.row -->
+    <div class="row">
+      <div class="col-12">
+	<p class="font-weight-bold">Técnicos enroladores responsables:</p>
+      </div>
+    </div>
+    <div class="row d-flex">
+      {% for enrolador in unidad.integrantes.all %}
+      <div class="col-6 d-flex mb-3">
+	<div>
+	  <p class="mb-1">Firma y huella del dedo índice: <span class="border border-top-0 border-left-0 border-right-0"></span></p>
+	  <p class="mb-1">Nombre: <span class="border border-top-0 border-left-0 border-right-0">{{ enrolador.usuario.get_full_name }}</span></p>
+	  <p>DNI: <span class="border border-top-0 border-left-0 border-right-0">{{ enrolador.usuario.username }}</span></p>
+	</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- ./wrapper -->
+<!-- Page specific script -->
+<script>
+  window.addEventListener("load", window.print());
+</script>
+</body>
+</html>
+
