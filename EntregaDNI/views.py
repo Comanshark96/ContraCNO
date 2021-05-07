@@ -119,6 +119,7 @@ class EscanerSobre(CreateView):
         if existe_sobre:
             return redirect(reverse_lazy('EscanerSobre'))
         else:
+            sobre.usuario = self.request.user
             sobre.save()
             return redirect(self.get_success_url())
 
