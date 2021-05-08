@@ -1,0 +1,38 @@
+{% extends 'EntregaDNI/base.html' %}
+
+{% block 'Titulo' %}Entregados por enrolador{% endblock %}
+{% block 'TituloContenido' %}Sobres entregados por enrolador{% endblock %}
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card card-outline card-orange">
+      <div class="card-body">
+	<table class="table table-hover text-center">
+	  <thead>
+	    <tr>
+	      <th>Enrolador</th>
+	      <th>Sobres entregados el {{ request.GET.fecha_entregadas }}</th>
+	      <th>Total sobres</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr class="font-weight-bold bg-info">
+	      <td></td>
+	      <td>Total:</td>
+	      <td>{{ total }}</td>
+	    </tr>
+	    {% for usuario in usuarios %}
+	    <tr>
+	      <td>{{ usuario.nombre }}</td>
+	      <td>{{ usuario.hoy }}</td>
+	      <td>{{ usuario.total }}</td>
+	    </tr>
+	    {% endfor %}
+	  </tbody>
+	</table>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
