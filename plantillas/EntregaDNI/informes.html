@@ -9,7 +9,7 @@
   <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
     <div class="card card-outline card-orange">
       <div class="card-header">
-	<h3>Informe diario</h3>
+	<h3>Actas de apertura y cierre</h3>
       </div>
       <div class="card-body">
 	<p>Muestra las entregas por día de cada caja</p>
@@ -32,6 +32,29 @@
       </div>
     </div>
   </div>
+  <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3>Informe por enrolador</h3>
+      </div>
+      <div class="card-body">
+	<p>Muestra las entregas por día de cada enrolador</p>
+	<form id="FormEntregadas" action="{% url 'EntregadosUsuario' %}">
+	  <div class="form-group mt-auto">
+	     <div class="input-group date" id="fecha-entregadas" data-target-input="nearest">
+		{{ entregadas.fecha_entregadas }}
+		<div class="input-group-append" data-target="#fecha-entregadas" data-toggle="datetimepicker">
+		  <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+		</div>
+	      </div>
+	    </div>
+	</form>
+      </div>
+      <div class="card-footer">
+	<button class="btn btn-block btn-primary" form="FormEntregadas">Solicitar</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 {% block 'OtrosEstilos' %}
@@ -43,6 +66,9 @@
 <script src="{% static 'plugins/daterangepicker/daterangepicker.js"></script>
 <script>
   $('#fecha').datetimepicker({
+    format: 'DD/MM/yyyy'
+  });
+  $('#fecha-entregadas').datetimepicker({
     format: 'DD/MM/yyyy'
   });
 </script>

@@ -67,6 +67,12 @@ class FormSobre(forms.ModelForm):
         
         return cod_caja
 
+class FormEntregadas(forms.Form):
+
+    fecha_entregadas = forms.DateField(required=True, widget=forms.DateInput(attrs={'class': 'form-control datetimepicker',
+                                                                         'placeholder': 'Fecha de consulta',
+                                                                         'data-target': '#fecha-entregadas'}))
+
 
 class FormActaCierre(forms.ModelForm):
 

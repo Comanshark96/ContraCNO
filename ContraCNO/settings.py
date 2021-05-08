@@ -123,5 +123,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
-LOGIN_URL = reverse_lazy('Ingreso')
+LOGOUT_REDIRECT_URL = LOGIN_URL = reverse_lazy('Ingreso')
 LOGIN_REDIRECT_URL = reverse_lazy('ListaCentros')

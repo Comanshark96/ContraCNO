@@ -65,6 +65,12 @@
   const editarCodigoCaja = () => $('#id_caja').removeAttr('readonly');
   // Funciones de proceso de QR
   const scanSuccess = (qrmessage) => {
+    camara = $('video');
+
+    if (camara.length > 0) {
+      camara.get(0).pause();
+    }
+
     codigo_sobre = qrmessage.substring(0, 9);
     codigo_caja = qrmessage.substring(9, 16);
 

@@ -20,6 +20,11 @@
 	    </tr>
 	  </thead>
           <tbody>
+	    <tr>
+	      <td></td>
+	      <td>Total sobres:</td>
+	      <td>{{ object_list.count }}</td>
+	    </tr>
 	    {% for sobre in object_list %}
 	    <tr>
 	      <td>{{ forloop.counter }}</td>

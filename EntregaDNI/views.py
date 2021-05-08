@@ -73,9 +73,9 @@ class EditarCentro(UpdateView):
         del_equipo = bool()
 
         if usuario.es_supervisor:
-            del_equipo = usuario.equipo_supervisado == self.get_object().equipo
+            del_equipo = usuario.equipo_supervisado == self.get_object().unidad.equipo
         else:
-            del_equipo = usuario.unidad.equipo == self.get_object().equipo
+            del_equipo = usuario.unidad.equipo == self.get_object().unidad.equipo
             
         if del_equipo:
             return super().dispatch(request, *args, **kwargs)
@@ -137,7 +137,7 @@ class ListaSobres(ListView):
         if usuario.es_supervisor:
             return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado)
         else:
-            return self.model.objects.filter(caja__centro__unidad__equipo=usuario.unidad.equipo)
+            return self.model.objects.filter(usuario=usuario.usuario)
 
 
 class Informes(TemplateView):
@@ -149,6 +149,7 @@ class Informes(TemplateView):
         contexto = super().get_context_data(**kwargs)
 
         formulario = forms.FormActaCierre()
+        form_entregadas = forms.FormEntregadas()
 
         if usuario.es_supervisor:
             formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.equipo_supervisado)
@@ -156,6 +157,7 @@ class Informes(TemplateView):
             formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.unidad.equipo)
 
         contexto['form'] = formulario
+        contexto['entregadas'] = form_entregadas
         
         return contexto
 
@@ -214,3 +216,45 @@ class ActaCierreImprimir(ActaCierre):
 class ActaAperturaImprimir(ActaCierre):
 
     template_name = 'EntregaDNI/acta-apertura-print.html'
+
+
+@method_decorator(never_cache, 'dispatch')
+class EntregadosUsuario(ListView):
+    """ Detalla la cantidad de sobres entregados por enrolador """
+
+    model = models.User
+    template_name = 'EntregaDNI/entregadas-usuario.html'
+
+    def get_queryset(self):
+        usuario = self.request.user.integrante
+        equipo = None
+
+        if usuario.es_supervisor:
+            equipo = usuario.equipo_supervisado
+        else:
+            equipo = usuario.unidad.equipo
+
+        return self.model.objects.filter(integrante__unidad__equipo=equipo)
+
+    def get_context_data(self, **kwargs):
+        usuario = self.request.user.integrante
+        ctx = super().get_context_data(**kwargs)
+        formulario = forms.FormEntregadas(self.request.GET)
+
+        if formulario.is_valid():
+            fecha = formulario.cleaned_data['fecha_entregadas']
+            usuarios = []
+            total = 0
+
+            for user in ctx['object_list']:
+                nuevo_resultado = {'nombre': user.get_full_name(),
+                                   'hoy': models.Sobre.objects.por_fecha(fecha, user),
+                                   'total': user.sobres.count()}
+
+                usuarios.append(nuevo_resultado)
+                total += nuevo_resultado['total']
+
+            ctx['usuarios'] = usuarios
+            ctx['total'] = total
+
+            return ctx

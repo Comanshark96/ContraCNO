@@ -35,4 +35,5 @@ urlpatterns = [
     path('acta-cierre/imprimir', login_required(views.ActaCierreImprimir.as_view()), name='ActaCierreImprimir'),
     path('acta-apertura/imprimir', login_required(views.ActaAperturaImprimir.as_view()), name='ActaAperturaImprimir'),
     path('informes', login_required(views.Informes.as_view()), name='Informes'),
+    path('entregadas', login_required(views.EntregadosUsuario.as_view()), name='EntregadosUsuario'),
 ]

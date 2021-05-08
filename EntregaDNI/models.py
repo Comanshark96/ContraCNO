@@ -67,6 +67,11 @@ class Caja(models.Model):
     def __str__(self):
         return f'{self.codigo} - {self.centro.nombre}'
 
+class ManejadorSobre(models.Manager):
+
+    def por_fecha(self, fecha, usuario):
+        return self.filter(fecha=fecha, usuario=usuario).count()
+
 
 class Sobre(models.Model):
     """ Representa un sobre que contiene la DNI """
@@ -75,7 +80,9 @@ class Sobre(models.Model):
     codigo = models.CharField(max_length=9)
     caja = models.ForeignKey(Caja, on_delete=models.CASCADE, related_name='sobre')
     fecha = models.DateField(auto_now_add=True)
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='sobres')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sobres')
+
+    objects = ManejadorSobre()
 
     def __str__(self):
         return f'Sobre {self.codigo} de caja {self.caja.codigo}'
