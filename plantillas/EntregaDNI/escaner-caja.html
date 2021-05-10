@@ -48,7 +48,7 @@
   const scanSuccess = (qrmessage) => $('#id_codigo').val(qrmessage);
   const scanFailure = (error) => console.log(error);
 
-  let escaner = new Html5QrcodeScanner("escaner", {fps:30, qrbox:125}, false);
-  escaner.render(scanSuccess, scanFailure);
+  const html5QrCode = new Html5Qrcode('escaner');
+  html5QrCode.start({facingMode:'environment'}, {fps:10, qrbox: 125}, scanSuccess)
 </script>
 {% endblock %}
