@@ -22,6 +22,9 @@
 <div class="row">
   <div class="col-sm-4">
     <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3 class="card-title">Escáner de sobre</h3>
+      </div>
       <div class="card-body">
 	<div class="img-fluid" id="escaner"></div>
       </div>
@@ -73,7 +76,7 @@
   }
   const scanFailure = (error) => console.log(error);
 
-  let escaner = new Html5QrcodeScanner("escaner", {fps:30, qrbox: 125}, false);
-  escaner.render(scanSuccess, scanFailure);
+  const html5QrCode = new Html5Qrcode('escaner');
+  html5QrCode.start({facingMode:'environment'}, {fps:10, qrbox: 125}, scanSuccess)
 </script>
 {% endblock %}

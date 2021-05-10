@@ -1,11 +1,15 @@
 {% extends 'EntregaDNI/base.html' %}
 {% load staticfiles %}
 
+{% block 'Titulo' %}Registrar Caja{% endblock %}
 {% block 'TituloContenido' %}Registrar caja de DNI's{% endblock %}
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-4">
     <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3 class="card-title">Escáner de caja</h3>
+      </div>
       <div class="card-body">
 	<div class="img-fluid" id="escaner"></div>
       </div>
