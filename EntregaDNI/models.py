@@ -80,9 +80,12 @@ class Sobre(models.Model):
     codigo = models.CharField(max_length=9)
     caja = models.ForeignKey(Caja, on_delete=models.CASCADE, related_name='sobre')
     fecha = models.DateField(auto_now_add=True)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sobres')
+    usuario = models.ForeignKey(Integrante, on_delete=models.CASCADE, related_name='sobres')
 
     objects = ManejadorSobre()
 
     def __str__(self):
         return f'Sobre {self.codigo} de caja {self.caja.codigo}'
+
+    class Meta:
+        ordering = ('-fecha',)

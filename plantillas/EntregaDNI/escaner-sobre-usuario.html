@@ -37,6 +37,14 @@
 	  {% csrf_token %}
 	  <div class="form-group">
 	    <div class="input-group">
+	      <div class="input-group-prepend">
+	        <span class="input-group-text"><i class="fas fa-user"></i></span>
+	      </div>
+	      {{ form.usuario }}
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="input-group">
 	      {{ form.codigo }}
 	      <div class="input-group-append">
 	        <button type="button" class="input-group-text" onclick="editarCodigoSobre()"><i class="fas fa-edit"></i></button>
@@ -59,7 +67,7 @@
 </div>
 <script src="{% static 'plugins/html5-qrcode/html5-qrcode.min.js' %}"></script>
 <script>
-  setTimeout(() => $('.alert').remove(), 5000)
+  setTimeout(() => $('.alert-success').remove(), 5000)
   // Editar código
   const editarCodigoSobre = () => $('#id_codigo').removeAttr('readonly');
   const editarCodigoCaja = () => $('#id_caja').removeAttr('readonly');

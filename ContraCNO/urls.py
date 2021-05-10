@@ -30,6 +30,7 @@ urlpatterns = [
     path('editar-centro/<int:pk>', login_required(views.EditarCentro.as_view()), name='EditarCentro'),
     path('crear-centro', login_required(views.CrearCentro.as_view()), name='CrearCentro'),
     path('escaner-sobre', login_required(views.EscanerSobre.as_view()), name='EscanerSobre'),
+    path('escaner-sobre-usuario', login_required(views.EscanerSobreUsuario.as_view()), name='EscanerSobreUsuario'),
     path('sobres', login_required(views.ListaSobres.as_view()), name='ListaSobres'),
     path('acta-cierre', login_required(views.ActaCierre.as_view()), name='ActaCierre'),
     path('acta-cierre/imprimir', login_required(views.ActaCierreImprimir.as_view()), name='ActaCierreImprimir'),

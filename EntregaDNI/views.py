@@ -119,7 +119,35 @@ class EscanerSobre(CreateView):
         if existe_sobre:
             return redirect(reverse_lazy('EscanerSobre'))
         else:
-            sobre.usuario = self.request.user
+            sobre.usuario = self.request.user.integrante
+            sobre.save()
+            return redirect(self.get_success_url())
+
+
+class EscanerSobreUsuario(EscanerSobre):
+    """ Extienede el EscanerSobre seleccionando el usuario que entrega """
+
+    form_class = forms.FormSobreUsuario
+    template_name = 'EntregaDNI/escaner-sobre-usuario.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('EscanerSobreUsuario') + '?exito'
+
+    def form_valid(self, form):
+        sobre = form.save(commit=False)
+        usuario = self.request.user.integrante
+        existe_sobre = bool(models.Sobre.objects.filter(codigo=sobre.codigo, caja=sobre.caja))
+        form = self.form_class()
+
+        if usuario.es_supervisor:
+            form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo_supervisado=usuario.equipo_supervisado)
+        else:
+            form.fields['usuario'].queryset = models.Integrante.objects.filter(unidad__equipo=usuario.unidad.equipo)
+
+
+        if existe_sobre:
+            return redirect(reverse_lazy('EscanerSobreUsuario'))
+        else:
             sobre.save()
             return redirect(self.get_success_url())
 
@@ -137,7 +165,7 @@ class ListaSobres(ListView):
         if usuario.es_supervisor:
             return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado)
         else:
-            return self.model.objects.filter(usuario=usuario.usuario)
+            return self.model.objects.filter(usuario=usuario)
 
 
 class Informes(TemplateView):
@@ -244,17 +272,20 @@ class EntregadosUsuario(ListView):
         if formulario.is_valid():
             fecha = formulario.cleaned_data['fecha_entregadas']
             usuarios = []
+            hoy_total = 0
             total = 0
 
             for user in ctx['object_list']:
                 nuevo_resultado = {'nombre': user.get_full_name(),
-                                   'hoy': models.Sobre.objects.por_fecha(fecha, user),
-                                   'total': user.sobres.count()}
+                                   'hoy': models.Sobre.objects.por_fecha(fecha, user.integrante),
+                                   'total': user.integrante.sobres.count()}
 
                 usuarios.append(nuevo_resultado)
                 total += nuevo_resultado['total']
+                hoy_total += nuevo_resultado['hoy']
 
             ctx['usuarios'] = usuarios
+            ctx['htotal'] = hoy_total
             ctx['total'] = total
 
             return ctx

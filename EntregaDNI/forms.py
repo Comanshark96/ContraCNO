@@ -67,6 +67,26 @@ class FormSobre(forms.ModelForm):
         
         return cod_caja
 
+
+class FormSobreUsuario(FormSobre):
+    """ Extensión de formulario de sobre que añade el usuario que entrega """
+
+    class Meta(FormSobre.Meta):
+        fields = FormSobre.Meta.fields + ('usuario',)
+        widgets = FormSobre.Meta.widgets
+        widgets['usuario'] = forms.Select(attrs={'class': 'form-control'})
+
+    def save(self, commit=True):
+        usuario = self.cleaned_data['usuario']
+        nuevo_sobre = super().save(commit=False)
+        nuevo_sobre.usuario = usuario
+
+        if commit:
+            usuario.save()
+
+        return nuevo_sobre
+
+
 class FormEntregadas(forms.Form):
 
     fecha_entregadas = forms.DateField(required=True, widget=forms.DateInput(attrs={'class': 'form-control datetimepicker',
