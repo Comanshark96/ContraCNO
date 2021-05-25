@@ -32,7 +32,13 @@
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-	<a class="nav-link" href="{% url 'Cierre' %}">Cerrar sesión</a>
+        <span class="nav-link">
+	  <i class="fas fa-envelope"></i>
+	  <span class="badge badge-success navbar-badge">0</span>
+	</span>
+      </li>
+      <li class="nav-item">
+	<a class="nav-link" href="{% url 'Cierre' %}"><i class="fas fa-door-open"></i></a>
       </li>
     </ul>
   </nav>
@@ -171,6 +177,13 @@
   })
   {% endfor %}
   {% endif %}
+
+  $.ajax({
+    url: "{% url 'sobres_hoy' %}",
+    success(data) {
+      $('span.navbar-badge').text(data);
+    }
+  });
 </script>
 {% block 'OtrosGuiones' %}{% endblock %}
 </body>

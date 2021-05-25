@@ -11,7 +11,6 @@ class FormCaja(forms.ModelForm):
         widgets = {
                 'codigo': forms.TextInput(attrs={
                     'class': 'form-control',
-                    'readonly': True,
                     'placeholder': 'Código de caja'
                     }),
                 'centro': forms.Select(attrs={'class': 'form-control'}),

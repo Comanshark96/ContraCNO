@@ -1,5 +1,5 @@
 import datetime
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect
@@ -13,6 +13,12 @@ from . import models, forms
 
 def inicio(request, *args, **kwargs):
     return redirect(reverse_lazy('ListaCentros'))
+
+@never_cache
+def sobres_hoy(request, *args, **kwargs):
+    sobres = request.user.integrante.sobres.filter(fecha=datetime.date.today()).count()
+    return HttpResponse(str(sobres))
+
     
 class EscanerCaja(CreateView):
 
@@ -168,6 +174,7 @@ class ListaSobres(ListView):
             return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado).order_by('-fecha')
         else:
             return self.model.objects.filter(usuario=usuario).order_by('-fecha')
+
 
 class EliminarSobre(DeleteView):
     """ Elimina un sobre en el sistema """

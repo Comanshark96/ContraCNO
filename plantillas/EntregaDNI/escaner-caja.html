@@ -5,15 +5,7 @@
 {% block 'TituloContenido' %}Registrar caja de DNI's{% endblock %}
 {% block 'Contenido' %}
 <div class="row">
-  <div class="col-sm-4">
-    <div class="card card-outline card-orange">
-      <div class="card-header">
-	<h3 class="card-title">Escáner de caja</h3>
-      </div>
-      <div class="card-body">
-	<div class="img-fluid" id="escaner"></div>
-      </div>
-    </div>
+  <div class="col-sm-2">
   </div>
   <div class="col-sm-8">
     <div class="card card-outline card-orange">
@@ -24,13 +16,8 @@
 	<form id="FormCaja" action="" enctype="multipart/data-form" method="POST">
 	  {% csrf_token %}
 	  <div class="form-group">
-	    <div class="input-group">
-	      {{ form.codigo }}
-	      <div class="input-group-append">
-	        <button type="button" class="input-group-text" onclick="editarCodigo()"><i class="fas fa-edit"></i></button>
-	      </div>
-	    </div>
-	      {% if form.errors.codigo %}<span class="text-sm text-danger">{{ form.errors.codigo }}</span>{% endif %}
+	    {{ form.codigo }}
+	    {% if form.errors.codigo %}<span class="text-sm text-danger">{{ form.errors.codigo }}</span>{% endif %}
 	  </div>
 	  <div class="form-group">
 	    {{ form.centro }}
@@ -43,16 +30,14 @@
       <div class="card-footer"><button class="btn btn-success btn-block" type="submit" form="FormCaja">Registrar</button></div>
     </div>
   </div>
+  <div class="col-sm-2"></div>
 </div>
-<script src="{% static 'plugins/html5-qrcode/html5-qrcode.min.js' %}"></script>
+{% endblock %}
+{% block 'OtrosGuiones' %}
 <script>
-  // Editar código
-  const editarCodigo = () => $('#id_codigo').removeAttr('readonly');
-  // Funciones de proceso de QR
-  const scanSuccess = (qrmessage) => $('#id_codigo').val(qrmessage);
-  const scanFailure = (error) => console.log(error);
-
-  const html5QrCode = new Html5Qrcode('escaner');
-  html5QrCode.start({facingMode:'environment'}, {fps:10, qrbox: 125}, scanSuccess)
+  $('form').submit(function() {
+    const overlay = '<div class="overlay dark"><i class="fas fa-sync fa-spin"></i></div>';
+    $('div.card.card-outline').append(overlay);
+  });
 </script>
 {% endblock %}

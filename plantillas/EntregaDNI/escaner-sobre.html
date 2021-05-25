@@ -120,5 +120,9 @@
     iniciarEscaner();
   });
   
+  $('form').submit(function() {
+    const overlay = '<div class="overlay dark text-center"><i class="fas fa-2x fa-sync fa-spin" style="margin-top: 20%;"></i></div>';
+    $('.modal-content').append(overlay);
+  });
 </script>
 {% endblock %}
