@@ -6,12 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block 'Titulo' %}{% endblock %} | ContraCNO</title>
 
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/sweetalert2/sweetalert2.min.css' %}">
   {% block 'OtrosEstilos' %}{% endblock %}
 </head>
 <body class="hold-transition sidebar-mini dark-mode layout-fixed layout-navbar-fixed">
@@ -39,9 +41,9 @@
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-orange elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-      <img src="{% static 'adminlte/img/AdminLTELogo.png' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">ContraCNO</span>
+    <a href="{% url 'Inicio' %}" class="brand-link">
+      <img src="{% static 'favicon.ico' %}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">Contra<b>CNO</b></span>
     </a>
 
     <!-- Sidebar -->
@@ -123,6 +125,8 @@
   </div>
   <!-- /.content-wrapper -->
 
+  {% block 'Modales' %}{% endblock %}
+
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- To the right -->
@@ -143,7 +147,31 @@
 <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+<script src="{% static 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
 
+<script>
+  {% if messages %}
+  {% for mensaje in messages %}
+  let titulo_{{ mensaje.tags }};
+
+  {% if mensaje.tags == 'error' %}
+  titulo_{{ mensaje.tags }} = 'Error';
+  {% elif mensaje.tags == 'success' %}
+  titulo_{{ mensaje.tags }} = 'Éxito';
+  {% elif mensaje.tags == 'info' %}
+  titulo_{{ mensaje.tags }} = 'Información';
+  {% elif mensaje.tags == 'warning' %}
+  titulo_{{ mensaje.tags }} = '¡Cuidado!';
+  {% endif %}
+
+  Swal.fire({
+    title: titulo_{{ mensaje.tags }},
+    icon: '{{ mensaje.tags }}',
+    text: '{{ mensaje }}'
+  })
+  {% endfor %}
+  {% endif %}
+</script>
 {% block 'OtrosGuiones' %}{% endblock %}
 </body>
 </html>

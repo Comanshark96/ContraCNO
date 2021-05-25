@@ -1,42 +1,14 @@
-{% extends 'EntregaDNI/base.html' %}
-{% load staticfiles %}
-
-{% block 'TituloContenido' %}Registrar sobre de DNI{% endblock %}
-{% block 'Titulo' %}Registrar sobre de DNI{% endblock %}
-{% block 'Contenido' %}
-<div class="row">
-  <div class="col-sm-12">
-    {% if 'exito' in request.GET %}
-    <div class="alert alert-success"><i class="fas fa-check"></i> Sobre registrado correctamente</div>
-    {% endif %}
-   {% if form.errors %}
-  <div class="alert alert-danger">
-    <h3><i class="fas fa-ban"></i> Error: Hubo algunos errores en el escaneo.</h3>
-    <ul>
-      {{ form.errors }}
-    </ul>
-  </div>
-  {% endif %}
- </div>
-</div>
-<div class="row">
-  <div class="col-sm-4">
-    <div class="card card-outline card-orange">
-      <div class="card-header">
-	<h3 class="card-title">Escáner de sobre</h3>
+{% extends 'EntregaDNI/escaner-sobre.html' %}
+{% block 'Modales' %}
+<div id="form-modal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Registrar sobre</h4>
+        <button class="close" data-dismiss="modal">&times;</button>
       </div>
-      <div class="card-body">
-	<div class="img-fluid" id="escaner"></div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-8">
-    <div class="card card-outline card-orange">
-      <div class="card-header">
-        <h3 class="card-title">Registro de sobre</h3>
-      </div>
-      <div class="card-body">
-	<form id="FormSobre" action="" enctype="multipart/data-form" method="POST">
+      <div class="modal-body">
+     	<form id="FormSobre" action="" enctype="multipart/data-form" method="POST">
 	  {% csrf_token %}
 	  <div class="form-group">
 	    <div class="input-group">
@@ -64,27 +36,12 @@
 	    </div>
 	</form>
       </div>
-      <div class="card-footer"><button class="btn btn-success btn-block" type="submit" form="FormSobre">Registrar</button></div>
+      <div class="modal-footer justify-content-between">
+	<button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+	<button class="btn btn-success" type="submit" form="FormSobre">Registrar</button>
+      </div>
+  </div>
     </div>
   </div>
 </div>
-<script src="{% static 'plugins/html5-qrcode/html5-qrcode.min.js' %}"></script>
-<script>
-  setTimeout(() => $('.alert-success').remove(), 5000)
-  // Editar código
-  const editarCodigoSobre = () => $('#id_codigo').removeAttr('readonly');
-  const editarCodigoCaja = () => $('#id_caja').removeAttr('readonly');
-  // Funciones de proceso de QR
-  const scanSuccess = (qrmessage) => {
-    codigo_sobre = qrmessage.substring(0, 9);
-    codigo_caja = qrmessage.substring(9, 16);
-
-    $('#id_codigo').val(codigo_sobre);
-    $('#id_caja').val(codigo_caja);
-  }
-  const scanFailure = (error) => console.log(error);
-
-  const html5QrCode = new Html5Qrcode('escaner');
-  html5QrCode.start({facingMode:'environment'}, {fps:10, qrbox: 125}, scanSuccess)
-</script>
 {% endblock %}

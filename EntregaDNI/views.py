@@ -3,9 +3,10 @@ from django.http import Http404, HttpResponseForbidden
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, TemplateView, ListView, UpdateView
+from django.views.generic import CreateView, TemplateView, ListView, UpdateView, DeleteView
 from django.views.decorators.cache import never_cache 
 from django.utils.decorators import method_decorator
+from django.contrib import messages
 from .numero_letras import numero_a_letras
 from . import models, forms
 
@@ -108,20 +109,20 @@ class EscanerSobre(CreateView):
     model = models.Sobre
     form_class = forms.FormSobre
     template_name = 'EntregaDNI/escaner-sobre.html'
-
-    def get_success_url(self):
-        return reverse_lazy('EscanerSobre') + '?exito'
+    success_url = reverse_lazy('EscanerSobre')
 
     def form_valid(self, form):
         sobre = form.save(commit=False)
-        existe_sobre = bool(models.Sobre.objects.filter(codigo=sobre.codigo, caja=sobre.caja))
+        existe_sobre = models.Sobre.objects.filter(codigo=sobre.codigo, caja=sobre.caja)
 
         if existe_sobre:
-            return redirect(reverse_lazy('EscanerSobre'))
+            messages.warning(self.request, f'El {existe_sobre[0]} ya fue registrado por {existe_sobre[0].usuario}')
         else:
             sobre.usuario = self.request.user.integrante
             sobre.save()
-            return redirect(self.get_success_url())
+            messages.success(self.request, f'El {sobre} se registró correctamente')
+        
+        return redirect(self.success_url)
 
 
 class EscanerSobreUsuario(EscanerSobre):
@@ -129,14 +130,12 @@ class EscanerSobreUsuario(EscanerSobre):
 
     form_class = forms.FormSobreUsuario
     template_name = 'EntregaDNI/escaner-sobre-usuario.html'
+    success_url = reverse_lazy('EscanerSobreUsuario')
     
-    def get_success_url(self):
-        return reverse_lazy('EscanerSobreUsuario') + '?exito'
-
     def form_valid(self, form):
         sobre = form.save(commit=False)
         usuario = self.request.user.integrante
-        existe_sobre = bool(models.Sobre.objects.filter(codigo=sobre.codigo, caja=sobre.caja))
+        existe_sobre = models.Sobre.objects.filter(codigo=sobre.codigo, caja=sobre.caja)
         form = self.form_class()
 
         if usuario.es_supervisor:
@@ -146,10 +145,12 @@ class EscanerSobreUsuario(EscanerSobre):
 
 
         if existe_sobre:
-            return redirect(reverse_lazy('EscanerSobreUsuario'))
+            messages.warning(self.request, f'El {existe_sobre[0]} ya fue registrado por {existe_sobre[0].usuario}')
         else:
             sobre.save()
-            return redirect(self.get_success_url())
+            messages.success(self.request, f'El {sobre} se registró correctamente')
+        
+        return redirect(self.success_url)
 
 
 class ListaSobres(ListView):
@@ -157,15 +158,35 @@ class ListaSobres(ListView):
 
     model = models.Sobre
     template_name = 'EntregaDNI/lista-sobres.html'
+    paginate_by = 50
 
     def get_queryset(self):
         """ Lista solo los sobres que escaneó el equipo """
         usuario = self.request.user.integrante
 
         if usuario.es_supervisor:
-            return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado)
+            return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado).order_by('-fecha')
         else:
-            return self.model.objects.filter(usuario=usuario)
+            return self.model.objects.filter(usuario=usuario).order_by('-fecha')
+
+class EliminarSobre(DeleteView):
+    """ Elimina un sobre en el sistema """
+
+    template_name = 'EntregaDNI/eliminar-sobre.html'
+    model = models.Sobre
+    success_url = reverse_lazy('ListaSobres')
+
+    def dispatch(self, request, *args, **kwargs):
+        """ Incluye la eliminación de solo los sobres dueños """
+
+        if self.get_object().usuario == request.user.integrante:
+            return super().dispatch(request, *args, **kwargs)
+        else:
+            raise Http404
+
+    def post(self, request, *args, **kwargs):
+        messages.success(self.request, f'Se ha eliminado el sobre correctamente')
+        return super().post(request, *args, **kwargs)
 
 
 class Informes(TemplateView):
