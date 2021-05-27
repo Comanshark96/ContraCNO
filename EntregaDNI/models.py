@@ -7,8 +7,9 @@ Autor: Carlos E. Rivera
 Licencia: GPLv3
 """
 
-from django.db import models
+
 from django.contrib.auth.models import User
+from django.db import models
 
 
 class Integrante(models.Model):
@@ -39,6 +40,7 @@ class Unidad(models.Model):
     id = models.BigAutoField(primary_key=True)
     equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='unidades')
     numero = models.CharField(max_length=30)
+    kit = models.CharField(max_length=4)
 
     def __str__(self):
         return f'Unidad {self.numero} de {self.equipo.nombre}'
@@ -79,7 +81,8 @@ class Sobre(models.Model):
     id = models.BigAutoField(primary_key=True)
     codigo = models.CharField(max_length=9)
     caja = models.ForeignKey(Caja, on_delete=models.CASCADE, related_name='sobre')
-    fecha = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
     usuario = models.ForeignKey(Integrante, on_delete=models.CASCADE, related_name='sobres')
     escaner = models.ForeignKey(Integrante, on_delete=models.SET_NULL, related_name='escaneados', null=True)
 
@@ -89,6 +92,6 @@ class Sobre(models.Model):
         return f'sobre {self.codigo} de caja {self.caja.codigo}'
 
     class Meta:
-        ordering = ('-fecha',)
+        ordering = ('-fecha', '-hora',)
 
 

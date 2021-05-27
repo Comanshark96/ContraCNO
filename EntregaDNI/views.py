@@ -1,4 +1,4 @@
-import datetime
+from django.utils.timezone import datetime
 from django.http import Http404, HttpResponseForbidden, HttpResponse
 from django.urls import reverse_lazy
 from django.db.models import Q
@@ -14,11 +14,13 @@ from . import models, forms
 def inicio(request, *args, **kwargs):
     return redirect(reverse_lazy('ListaCentros'))
 
+
 @never_cache
 def sobres_hoy(request, *args, **kwargs):
-    sobres = request.user.integrante.sobres.filter(fecha=datetime.date.today()).count()
-    return HttpResponse(str(sobres))
-
+    sobres = request.user.integrante.sobres.filter(fecha=datetime.today()).count()
+    enrolados = request.user.integrante.enrolamientos.filter(fecha=datetime.today()).count()
+    escaneados = request.user.integrante.escaneados.filter(fecha=datetime.today()).count()
+    return HttpResponse(str([sobres, enrolados]))
     
 class EscanerCaja(CreateView):
 
@@ -304,6 +306,7 @@ class EntregadosUsuario(ListView):
 
         if formulario.is_valid():
             fecha = formulario.cleaned_data['fecha_entregadas']
+            print(fecha)
             usuarios = []
             hoy_total = 0
             total = 0
@@ -311,6 +314,7 @@ class EntregadosUsuario(ListView):
             for user in ctx['object_list']:
                 nuevo_resultado = {'nombre': user.get_full_name(),
                                    'hoy': models.Sobre.objects.por_fecha(fecha, user.integrante),
+                                   'escaneado': user.integrante.escaneados.filter(fecha=datetime.today()).count(),
                                    'total': user.integrante.sobres.count()}
 
                 usuarios.append(nuevo_resultado)

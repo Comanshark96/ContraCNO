@@ -32,13 +32,39 @@
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <span class="nav-link">
+        <a href="#" class="nav-link">
 	  <i class="fas fa-envelope"></i>
-	  <span class="badge badge-success navbar-badge">0</span>
-	</span>
+	  <span class="badge badge-success navbar-badge"></span>
+	</a>
       </li>
       <li class="nav-item">
-	<a class="nav-link" href="{% url 'Cierre' %}"><i class="fas fa-door-open"></i></a>
+	<a class="nav-link" href="#"><i class="fas fa-camera"></i><span class="badge badge-danger navbar-badge"></span></a>
+      </li>
+      <li class="nav-item">
+	<a class="nav-link" href="#"><i class="fas fa-qrcode"></i>
+	  <span class="badge badge-warning navbar-badge"></span>
+	</a>
+      </li>
+      <li class="nav-item dropdown user-menu">
+        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+          <img src="{% static 'adminlte/img/profile.png' %}" class="user-image img-circle elevation-2" alt="User Image">
+	  <span class="d-none d-md-inline">{{ user.first_name }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <!-- User image -->
+          <li class="user-header bg-orange">
+	    <img src="{% static 'adminlte/img/profile.png' %}" class="img-circle elevation-2" alt="User Image">
+
+            <p>
+	      {{ user.get_full_name }}
+	      <small>{{ user.username }}</small>
+            </p>
+          </li>
+          <!-- Menu Footer-->
+          <li class="user-footer text-center">
+            <a href="{% url 'Cierre' %}" class="btn btn-danger btn-flat"><i class="fas fa-door-open"></i> Cerrar sesión</a>
+          </li>
+        </ul>
       </li>
     </ul>
   </nav>
@@ -60,9 +86,9 @@
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
           <li class="nav-item menu-open">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-address-card"></i>
-              <p>
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-address-card text-orange"></i>
+              <p class="font-weight-bold">
                 Inventario DNI
                 <i class="right fas fa-angle-left"></i>
               </p>
@@ -92,14 +118,38 @@
 		  <p>Escanear sobres</p>
 		</a>
 	      </li>
-	      <li class="nav-item">
-		<a class="nav-link" href="{% url 'Informes' %}">
-		  <i class="fas fa-file nav-icon"></i>
-		  <p>Informes</p>
-		</a>
-	      </li>
+	      
             </ul>
           </li>
+	  <li class="nav-item menu-open">
+	    <a class="nav-link" href="#">
+	      <i class="nav-icon fas fa-camera text-orange"></i>
+	      <p class="font-weight-bold">
+		Enrolamientos
+	        <i class="fas fa-angle-left right"></i>
+	      </p>
+	    </a>
+	    <ul class="nav nav-treeview">
+	      <li class="nav-item">
+		<a class="nav-link" href="#">
+		  <i class="fas fa-building nav-icon"></i>
+		  <p>Sedes</p>
+		</a>
+	      </li>
+	      <li class="nav-item">
+		<a class="nav-link" href="#">
+		  <i class="fas fa-qrcode nav-icon"></i>
+		  <p>Escanear recibo</p>
+		</a>
+	      </li>
+	    </ul>
+	  </li>
+	  <li class="nav-item menu-open ">
+	    <a class="nav-link" href="{% url 'Informes' %}">
+	      <i class="fas fa-file nav-icon text-orange"></i>
+		<p class="font-weight-bold">Informes</p>
+	    </a>
+	  </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -181,7 +231,13 @@
   $.ajax({
     url: "{% url 'sobres_hoy' %}",
     success(data) {
-      $('span.navbar-badge').text(data);
+      datos = JSON.parse(data)
+      if (datos[0] > 0)
+	$('span.badge-success').text(datos[0]);
+      if (datos[1] > 0)
+	$('span.badge-danger').text(datos[1]);
+      if (datos[2] > 0)
+	$('span.badge-warning').text(datos[2]);
     }
   });
 </script>

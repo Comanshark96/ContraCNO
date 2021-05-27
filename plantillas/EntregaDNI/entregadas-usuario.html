@@ -1,7 +1,7 @@
 {% extends 'EntregaDNI/base.html' %}
 
 {% block 'Titulo' %}Entregados por enrolador{% endblock %}
-{% block 'TituloContenido' %}Sobres entregados por enrolador{% endblock %}
+{% block 'TituloContenido' %}Sobres entregados por enrolador al {{ request.GET.fecha_entregadas }}{% endblock %}
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-12">
@@ -11,19 +11,22 @@
 	  <thead>
 	    <tr>
 	      <th>Enrolador</th>
-	      <th>Sobres entregados el {{ request.GET.fecha_entregadas }}</th>
+	      <th>Escaneados</th>
+	      <th>Sobres</th>
 	      <th>Total sobres</th>
 	    </tr>
 	  </thead>
 	  <tbody>
 	    <tr class="font-weight-bold bg-info">
 	      <td>Total:</td>
+	      <td></td>
 	      <td>{{ htotal }}</td>
 	      <td>{{ total }}</td>
 	    </tr>
-	    {% for usuario in usuarios %}
+	    {% for usuario in usuarios|dictsortreversed:'hoy' %}
 	    <tr>
 	      <td>{{ usuario.nombre }}</td>
+	      <td>{{ usuario.escaneado }}</td>
 	      <td>{{ usuario.hoy }}</td>
 	      <td>{{ usuario.total }}</td>
 	    </tr>

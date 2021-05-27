@@ -16,20 +16,15 @@
 	    <tr>
 	      <th>No.</th>
 	      <th>Sobre</th>
-	      <th>Caja</th>
+	      <th>Fecha y hora</th>
 	    </tr>
 	  </thead>
           <tbody>
-	    <tr>
-	      <td></td>
-	      <td>Total sobres:</td>
-	      <td>{{ object_list.count }}</td>
-	    </tr>
 	    {% for sobre in page_obj %}
 	    <tr>
 	      <td>{{ forloop.counter }}</td>
-	      <td>{{ sobre.codigo }}</td>
-	      <td>{{ sobre.caja }}</td>
+	      <td>{{ sobre.codigo }}-{{ sobre.caja.codigo }}</td>
+	      <td>{{ sobre.fecha }} a las {{ sobre.hora | date:'h:i A'}}</td>
 	      <td><a href="{% url 'EliminarSobre' sobre.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a></td>
 	      {% empty %}
 	      <div class="alert alert-info">
