@@ -1,0 +1,110 @@
+{% extends 'EntregaDNI/base.html' %}
+{% load staticfiles %}
+{% block 'Titulo' %}Escaner recibo{% endblock %}
+{% block 'TituloContenido' %}Escanear recibo{% endblock %}
+
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3>Escaner</h3>
+      </div>
+      <div class="card-body">
+	<div id="escaner" class="img-fluid"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3"></div>
+</div>
+<script src="{% static 'plugins/html5-qrcode/html5-qrcode.min.js' %}"></script>
+<script>
+  // Inicializando escaner
+  const escaner = new Html5Qrcode('escaner');
+
+  // Funciones de proceso de QR
+  const scanSuccess = (qrmessage) => {
+    const re = /[0-9]{30}/
+
+    if (re.test(qrmessage)) {
+      $('#id_codigo').val(qrmessage);
+      $('#form-modal').modal('show');
+      escaner.stop();
+    }
+  }
+  const scanFailure = (error) => console.log(error);
+  
+  const iniciarEscaner = () => {
+    Html5Qrcode.getCameras().then(devices => {
+	if (devices && devices.length) {
+	  var cameraId = devices[devices.length - 1].id;
+	  escaner.start(cameraId, {fps:10, qrbox: 125}, scanSuccess)
+	}
+      }).catch(err => {
+	Swal.fire({
+	  title: '¡Ups!',
+	  text: 'Al parecer hubo un error con la cámara.\n' + err,
+	  icon: 'error'});
+      });
+  }
+
+  // Iniciando escaner.
+  {% if not form.errors %}
+  iniciarEscaner();
+  {% endif %}
+</script>
+{% endblock %}
+{% block 'OtrosGuiones' %}
+<script>
+  {% if form.errors %}
+  $('#form-modal').modal('show');
+  Swal.fire({
+    title: '¡Ups!',
+    text: 'Ocuerrieron algunos errores al registrar el sobre',
+    icon: 'error'
+  });
+  {% endif %}
+
+  $('#form-modal').on('show.bs.modal', function () {
+    escaner.stop();
+    $('#escaner').children().remove();
+  });
+  $('#form-modal').on('hide.bs.modal', function() {
+    iniciarEscaner();
+  });
+  
+  $('form').submit(function() {
+    const overlay = '<div class="overlay dark text-center"><i class="fas fa-2x fa-sync fa-spin" style="margin-top: 20%;"></i></div>';
+    $('.modal-content').append(overlay);
+  });
+</script>
+{% endblock %}
+{% block 'Modales' %}
+<div id="form-modal" class="modal fade">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+	<h4 class="modal-title">Registrar sobre</h4>
+	<button class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+	{% block 'FormularioModal' %}
+	<form id="FormSobre" action="" enctype="multipart/data-form" method="POST">
+	  {% csrf_token %}
+	  <div class="form-group">
+	    {{ form.codigo }}
+	  </div>
+	  {% if form.errors.codigo %}<span class="text-sm text-danger">{{ form.errors.codigo }}</span>{% endif %}
+	</form>
+	{% endblock %}
+      </div>
+      <div class="modal-footer justify-content-between">
+	<button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+	<button class="btn btn-success" type="submit" form="FormSobre">Registrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

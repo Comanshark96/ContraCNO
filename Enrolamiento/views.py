@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
-from django.shortcuts import render
+from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView
+from django.contrib import messages
 from . import models as m, forms as f
 
 
@@ -15,9 +16,9 @@ class ListaSedes(ListView):
         query = None
 
         if usuario.es_supervisado:
-            query = m.Sede.objects.filter(unidades.equipo=usuario.equipo_supervisado)
+            query = m.Sede.objects.filter(unidades__equipo=usuario.equipo_supervisado)
         else:
-            query = m.Sede.objects.filter(unidades.equipo=usuario.equipo)
+            query = m.Sede.objects.filter(unidades__equipo=usuario.equipo)
 
         return query
 
@@ -31,4 +32,9 @@ class EscanerRecibo(CreateView):
 
     def form_valid(self, form):
         recibo = form.save(commit=False)
-        recibo
+        recibo.unidad = m.Unidad.objects.get(kit=recibo.codigo[:4])
+        recibo.usuario = self.request.user.integrante
+        recibo.save()
+        messages.success(self.request, 'Se ha registrado el recibo correctamente')
+
+        return redirect(self.success_url)

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 from usuario.views import Ingreso, LogoutView
+from Enrolamiento import views as enrol
 from EntregaDNI import views
 
 urlpatterns = [
@@ -39,4 +40,5 @@ urlpatterns = [
     path('acta-apertura/imprimir', login_required(views.ActaAperturaImprimir.as_view()), name='ActaAperturaImprimir'),
     path('informes', login_required(views.Informes.as_view()), name='Informes'),
     path('entregadas', login_required(views.EntregadosUsuario.as_view()), name='EntregadosUsuario'),
+    path('escaner-recibo', login_required(enrol.EscanerRecibo.as_view()), name='EscanerRecibo'),
 ]

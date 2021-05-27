@@ -20,7 +20,7 @@ def sobres_hoy(request, *args, **kwargs):
     sobres = request.user.integrante.sobres.filter(fecha=datetime.today()).count()
     enrolados = request.user.integrante.enrolamientos.filter(fecha=datetime.today()).count()
     escaneados = request.user.integrante.escaneados.filter(fecha=datetime.today()).count()
-    return HttpResponse(str([sobres, enrolados]))
+    return HttpResponse(str([sobres, enrolados, escaneados]))
     
 class EscanerCaja(CreateView):
 
