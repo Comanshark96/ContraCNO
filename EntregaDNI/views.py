@@ -145,16 +145,20 @@ class EscanerSobreUsuario(EscanerSobre):
         form = self.form_class()
 
         if usuario.es_supervisor:
-            form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo_supervisado=usuario.equipo_supervisado)
+            form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo_supervisado=usuario.equipo_supervisado).exclude(es_supervisor=True)
+
         else:
-            form.fields['usuario'].queryset = models.Integrante.objects.filter(unidad__equipo=usuario.unidad.equipo)
+            form.fields['usuario'].queryset = models.Integrante.objects.filter(unidad__equipo=usuario.unidad.equipo).exclude(es_supervisor=True)
 
 
         if existe_sobre:
             messages.warning(self.request, f'El {existe_sobre[0]} ya fue registrado por {existe_sobre[0].usuario}')
         else:
+            if sobre.usuario != usuario:
+                sobre.escaner = usuario
+
             sobre.save()
-            messages.success(self.request, f'El {sobre} se registró correctamente')
+            messages.success(self.request, f'El {sobre} se registró correctamente para {sobre.usuario.usuario.get_full_name()}')
         
         return redirect(self.success_url)
 
@@ -171,9 +175,9 @@ class ListaSobres(ListView):
         usuario = self.request.user.integrante
 
         if usuario.es_supervisor:
-            return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado).order_by('-fecha')
+            return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado)
         else:
-            return self.model.objects.filter(usuario=usuario).order_by('-fecha')
+            return self.model.objects.filter(usuario=usuario)
 
 
 class EliminarSobre(DeleteView):
@@ -211,6 +215,7 @@ class Informes(TemplateView):
             formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.equipo_supervisado)
         else:
             formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.unidad.equipo)
+
 
         contexto['form'] = formulario
         contexto['entregadas'] = form_entregadas
@@ -290,7 +295,7 @@ class EntregadosUsuario(ListView):
         else:
             equipo = usuario.unidad.equipo
 
-        return self.model.objects.filter(integrante__unidad__equipo=equipo)
+        return self.model.objects.filter(integrante__unidad__equipo=equipo).exclude(integrante__es_supervisor=True)
 
     def get_context_data(self, **kwargs):
         usuario = self.request.user.integrante

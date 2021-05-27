@@ -79,13 +79,16 @@ class Sobre(models.Model):
     id = models.BigAutoField(primary_key=True)
     codigo = models.CharField(max_length=9)
     caja = models.ForeignKey(Caja, on_delete=models.CASCADE, related_name='sobre')
-    fecha = models.DateField(auto_now_add=True)
+    fecha = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(Integrante, on_delete=models.CASCADE, related_name='sobres')
+    escaner = models.ForeignKey(Integrante, on_delete=models.SET_NULL, related_name='escaneados', null=True)
 
     objects = ManejadorSobre()
 
     def __str__(self):
-        return f'Sobre {self.codigo} de caja {self.caja.codigo}'
+        return f'sobre {self.codigo} de caja {self.caja.codigo}'
 
     class Meta:
         ordering = ('-fecha',)
+
+
