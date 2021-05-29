@@ -36,7 +36,7 @@ class EliminarSede(DeleteView):
 
     def post(self, request, *args, **kwargs):
         messages.success(request, f'Se ha eliminado la sede {{ object.nombre }}')
-        return super().post(reqeuest, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 class DetalleSede(DetailView):
     """ Detalla una sede de enrolamiento """
