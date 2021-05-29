@@ -12,12 +12,20 @@ class CrearSede(CreateView):
     form_class = f.FormularioSede
     template_name = 'Enrolamiento/crear-sede.html'
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Se ha creado una sede correctamente')
+        return super().form_valid(form)
+
 
 class EditarSede(UpdateView):
 
     model = m.Sede
     form_class = f.FormularioSede
     template_name = 'Enrolamiento/crear-sede.html'
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Se ha editado correctamente')
+        return super().form_valid(form)
 
 
 class EliminarSede(DeleteView):
@@ -27,7 +35,8 @@ class EliminarSede(DeleteView):
     template_name = 'Enrolamiento/eliminar-sede.html'
 
     def post(self, request, *args, **kwargs):
-        messages.success(f'Se ha eliminado la sede {{ object.nombre }}')
+        messages.success(request, f'Se ha eliminado la sede {{ object.nombre }}')
+        return super().post(reqeuest, *args, **kwargs)
 
 class DetalleSede(DetailView):
     """ Detalla una sede de enrolamiento """
