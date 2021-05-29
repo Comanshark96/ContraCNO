@@ -7,7 +7,6 @@ Autor: Carlos E. Rivera
 Licencia: GPLv3
 """
 
-
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -20,7 +19,7 @@ class Integrante(models.Model):
     unidad = models.ForeignKey('Unidad', on_delete=models.CASCADE, related_name='integrantes', blank=True, null=True)
 
     def __str__(self):
-        return self.usuario.username + ' - ' + self.usuario.get_full_name()
+        return self.usuario.get_full_name()
 
 
 class Equipo(models.Model):

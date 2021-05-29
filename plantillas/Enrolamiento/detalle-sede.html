@@ -1,0 +1,40 @@
+{% extends 'EntregaDNI/base.html' %}
+{% block 'Titulo'%}Detalle sede{% endblock %}
+{% block 'TituloContenido'%}Detalle sede <small>{{ sede.nombre }}</small>{% endblock %}
+
+{% block 'Contenido' %}
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="info-box bg-info">
+      <span class="info-box-icon"><i class="fas fa-users"></i></span>
+      <div class="info-box-content">
+	<h2>Total de enrolamientos: {{ object.informe.enrolados }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3"></div>
+</div>
+<div class="row d-flex align-items-stretch justify-content-center">
+  {% for unidad in object.informe.unidades %}
+  <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3>Unidad {{ unidad.unidad.numero }} (kit {{ unidad.unidad.kit }})</h3>
+      </div>
+      <div class="card-body text-lg">
+	<p>
+	  <span class="font-weight-bold">1er recibo:</span> {{ unidad.primer_recibo.codigo | slice:'-7:' }}
+	</p>
+	<p>
+	<p>
+	  <span class="font-weight-bold">2do recibo:</span> {{ unidad.ultimo_recibo.codigo | slice:'-7:' }}
+	</p>
+	  <span class="font-weight-bold">Total:</span> {{ unidad.total }}
+	</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

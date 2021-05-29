@@ -10,7 +10,9 @@
   <div class="col-sm-12">
     <div class="card card-outline card-orange">
       <div class="card-footer">
-	<a href="{% url 'EscanerCaja' %}" class="btn btn-success btn-block"><i class="fas fa-plus-circle"></i> Registrar cajas</a>
+	{% if user.is_staff or user.integrante.es_supervisor %}
+	<a href="{% url 'EscanerCaja' %}" class="btn btn-default btn-block"><i class="fas fa-plus-circle"></i> Registrar cajas</a>
+	{% endif %}
       </div>
       <div class="card-body table-responsive">
 	<table class="table table-hover">

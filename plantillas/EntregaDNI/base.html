@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block 'Titulo' %}{% endblock %} | ContraCNO</title>
 
+  <meta name="mobile-web-app-capable" content="yes">
   <link rel="shortcut icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -131,7 +132,7 @@
 	    </a>
 	    <ul class="nav nav-treeview">
 	      <li class="nav-item">
-		<a class="nav-link" href="#">
+		<a class="nav-link" href="{% url 'ListaSedes' %}">
 		  <i class="fas fa-building nav-icon"></i>
 		  <p>Sedes</p>
 		</a>

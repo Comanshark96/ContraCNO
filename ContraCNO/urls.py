@@ -41,4 +41,9 @@ urlpatterns = [
     path('informes', login_required(views.Informes.as_view()), name='Informes'),
     path('entregadas', login_required(views.EntregadosUsuario.as_view()), name='EntregadosUsuario'),
     path('escaner-recibo', login_required(enrol.EscanerRecibo.as_view()), name='EscanerRecibo'),
+    path('sedes', login_required(enrol.ListaSedes.as_view()), name='ListaSedes'),
+    path('sedes/<int:pk>', login_required(enrol.DetalleSede.as_view()), name='DetalleSede'),
+    path('sedes/crear', login_required(enrol.CrearSede.as_view()), name='CrearSede'),
+    path('sedes/<int:pk>/editar', login_required(enrol.EditarSede.as_view()), name='EditarSede'),
+    path('sedes/<int:pk>/eliminar', login_required(enrol.EliminarSede.as_view()), name='EliminarSede'),
 ]

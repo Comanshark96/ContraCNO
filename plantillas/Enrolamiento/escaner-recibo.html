@@ -25,10 +25,10 @@
 
   // Funciones de proceso de QR
   const scanSuccess = (qrmessage) => {
-    const re = /[0-9]{30}/
+    const re = /[10]{1}[0-9]{3}[1-9]{1}[0-9]{3}[0-9]{5}\|[0-9]{30}/
 
     if (re.test(qrmessage)) {
-      $('#id_codigo').val(qrmessage);
+      $('#id_codigo').val(qrmessage.substring(14, 44));
       $('#form-modal').modal('show');
       escaner.stop();
     }

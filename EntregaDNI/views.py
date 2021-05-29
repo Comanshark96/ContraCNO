@@ -18,7 +18,7 @@ def inicio(request, *args, **kwargs):
 @never_cache
 def sobres_hoy(request, *args, **kwargs):
     sobres = request.user.integrante.sobres.filter(fecha=datetime.today()).count()
-    enrolados = request.user.integrante.enrolamientos.filter(fecha=datetime.today()).count()
+    enrolados = request.user.integrante.enrolados.filter(sede__fecha=datetime.today()).count()
     escaneados = request.user.integrante.escaneados.filter(fecha=datetime.today()).count()
     return HttpResponse(str([sobres, enrolados, escaneados]))
     
@@ -309,20 +309,27 @@ class EntregadosUsuario(ListView):
             print(fecha)
             usuarios = []
             hoy_total = 0
+            escaneado = 0
+            enrolado = 0
             total = 0
 
             for user in ctx['object_list']:
                 nuevo_resultado = {'nombre': user.get_full_name(),
                                    'hoy': models.Sobre.objects.por_fecha(fecha, user.integrante),
                                    'escaneado': user.integrante.escaneados.filter(fecha=datetime.today()).count(),
+                                   'enrolado': user.integrante.enrolados.filter(sede__fecha=datetime.today()).count(),
                                    'total': user.integrante.sobres.count()}
 
                 usuarios.append(nuevo_resultado)
                 total += nuevo_resultado['total']
+                escaneado += nuevo_resultado['escaneado']
+                enrolado += nuevo_resultado['enrolado']
                 hoy_total += nuevo_resultado['hoy']
 
             ctx['usuarios'] = usuarios
             ctx['htotal'] = hoy_total
+            ctx['escaneado'] = escaneado
+            ctx['enrolado'] = enrolado
             ctx['total'] = total
 
             return ctx
