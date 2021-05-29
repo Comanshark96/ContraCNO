@@ -11,6 +11,7 @@ class CrearSede(CreateView):
     model = m.Sede
     form_class = f.FormularioSede
     template_name = 'Enrolamiento/crear-sede.html'
+    success_url = reverse_lazy('ListaSedes')
 
     def form_valid(self, form):
         messages.success(self.request, 'Se ha creado una sede correctamente')
@@ -22,6 +23,7 @@ class EditarSede(UpdateView):
     model = m.Sede
     form_class = f.FormularioSede
     template_name = 'Enrolamiento/crear-sede.html'
+    success_url = reverse_lazy('ListaSedes')
 
     def form_valid(self, form):
         messages.success(self.request, 'Se ha editado correctamente')
@@ -33,6 +35,7 @@ class EliminarSede(DeleteView):
 
     model = m.Sede
     template_name = 'Enrolamiento/eliminar-sede.html'
+    success_url = reverse_lazy('ListaSedes')
 
     def post(self, request, *args, **kwargs):
         messages.success(request, f'Se ha eliminado la sede {{ object.nombre }}')
