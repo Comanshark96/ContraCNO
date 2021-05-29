@@ -7,10 +7,11 @@ from . import models as m
 class FormularioSede(forms.ModelForm):
     """ Formulario para crear/editar sedes """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, edicion=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['unidades'].queryset = m.Unidad.objects.exclude(sedes__fecha=datetime.date.today())
+        if not edicion:
+            self.fields['unidades'].queryset = m.Unidad.objects.exclude(sedes__fecha=datetime.date.today())
 
     class Meta:
         model = m.Sede

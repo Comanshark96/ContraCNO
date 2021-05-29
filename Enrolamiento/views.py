@@ -25,6 +25,12 @@ class EditarSede(UpdateView):
     template_name = 'Enrolamiento/crear-sede.html'
     success_url = reverse_lazy('ListaSedes')
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        return form_class(True, **self.get_form_kwargs())
+
     def form_valid(self, form):
         messages.success(self.request, 'Se ha editado correctamente')
         return super().form_valid(form)
