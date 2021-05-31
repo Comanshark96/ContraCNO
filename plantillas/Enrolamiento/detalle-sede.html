@@ -4,8 +4,7 @@
 
 {% block 'Contenido' %}
 <div class="row">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6">
+  <div class="col-sm-12 text-center">
     <div class="info-box bg-info">
       <span class="info-box-icon"><i class="fas fa-users"></i></span>
       <div class="info-box-content">
@@ -13,7 +12,6 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-3"></div>
 </div>
 <div class="row d-flex align-items-stretch justify-content-center">
   {% for unidad in object.informe.unidades %}
@@ -24,11 +22,16 @@
       </div>
       <div class="card-body text-lg">
 	<p>
-	  <span class="font-weight-bold">1er recibo:</span> {{ unidad.primer_recibo.codigo | slice:'-7:' }}
+	  <span class="font-weight-bold" >1er recibo:</span>
+	  <span data-toggle="popover" data-placement="right" data-content="{{unidad.primer_recibo.codigo}}">
+	    {{ unidad.primer_recibo.codigo | slice:'-7:' }}
+	  </span>
 	</p>
 	<p>
-	<p>
-	  <span class="font-weight-bold">2do recibo:</span> {{ unidad.ultimo_recibo.codigo | slice:'-7:' }}
+	  <span class="font-weight-bold" >2do recibo:</span>
+	  <span data-toggle="popover" data-placement="right" data-content="{{unidad.ultimo_recibo.codigo}}">
+	    {{ unidad.ultimo_recibo.codigo | slice:'-7:' }}
+	  </span>
 	</p>
 	  <span class="font-weight-bold">Total:</span> {{ unidad.total }}
 	</p>
@@ -37,4 +40,11 @@
   </div>
   {% endfor %}
 </div>
+{% endblock %}
+{% block 'OtrosGuiones' %}
+<script>
+  $(document).ready(function() {
+    $('[data-toggle="popover"]').popover();
+  });
+</script>
 {% endblock %}

@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import path
 from usuario.views import Ingreso, LogoutView
 from Enrolamiento import views as enrol
+from Informe import views as info
 from EntregaDNI import views
 
 urlpatterns = [
@@ -35,11 +36,11 @@ urlpatterns = [
     path('sobres', login_required(views.ListaSobres.as_view()), name='ListaSobres'),
     path('sobres_hoy', login_required(views.sobres_hoy), name='sobres_hoy'),
     path('sobres/eliminar/<int:pk>', login_required(views.EliminarSobre.as_view()), name="EliminarSobre"),
-    path('acta-cierre', login_required(views.ActaCierre.as_view()), name='ActaCierre'),
-    path('acta-cierre/imprimir', login_required(views.ActaCierreImprimir.as_view()), name='ActaCierreImprimir'),
-    path('acta-apertura/imprimir', login_required(views.ActaAperturaImprimir.as_view()), name='ActaAperturaImprimir'),
-    path('informes', login_required(views.Informes.as_view()), name='Informes'),
-    path('entregadas', login_required(views.EntregadosUsuario.as_view()), name='EntregadosUsuario'),
+    path('acta-cierre', login_required(info.ActaCierre.as_view()), name='ActaCierre'),
+    path('acta-cierre/imprimir', login_required(info.ActaCierreImprimir.as_view()), name='ActaCierreImprimir'),
+    path('acta-apertura/imprimir', login_required(info.ActaAperturaImprimir.as_view()), name='ActaAperturaImprimir'),
+    path('informes', login_required(info.Informes.as_view()), name='Informes'),
+    path('entregadas', login_required(info.EntregadosUsuario.as_view()), name='EntregadosUsuario'),
     path('escaner-recibo', login_required(enrol.EscanerRecibo.as_view()), name='EscanerRecibo'),
     path('sedes', login_required(enrol.ListaSedes.as_view()), name='ListaSedes'),
     path('sedes/<int:pk>', login_required(enrol.DetalleSede.as_view()), name='DetalleSede'),

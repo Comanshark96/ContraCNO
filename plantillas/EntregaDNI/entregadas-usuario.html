@@ -1,12 +1,31 @@
 {% extends 'EntregaDNI/base.html' %}
+{% load staticfiles %}
 
 {% block 'Titulo' %}Entregados por enrolador{% endblock %}
 {% block 'TituloContenido' %}Informe diario por enrolador al {{ request.GET.fecha_entregadas }}{% endblock %}
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-12">
-    <div class="card card-outline card-orange">
+    <div class="card card-solid">
+      <div class="card-header">
+	<h3>Total de entregadas: {{ total }}</h3>
+      </div>
       <div class="card-body">
+	<form id="FormEntregadas" action="{% url 'EntregadosUsuario' %}">
+	  <div class="form-group">
+	     <div class="input-group date" id="fecha-entregadas" data-target-input="nearest">
+		{{ entregadas.fecha_entregadas }}
+		<div class="input-group-append" data-target="#fecha-entregadas" data-toggle="datetimepicker">
+		  <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+		</div>
+	      </div>
+	    </div>
+	    <button class="btn btn-block btn-success" type="submit"><i class="fas fa-search"></i> Buscar</button>
+	</form>
+      </div>
+    </div>
+    <div class="card card-outline card-orange">
+      <div class="card-body table-responsive">
 	<table class="table table-hover text-center">
 	  <thead>
 	    <tr>
@@ -33,9 +52,18 @@
 	    {% endfor %}
 	  </tbody>
 	</table>
-
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+{% block 'OtrosGuiones' %}
+<script src="{% static 'plugins/moment/moment.min.js' %}"></script>
+<script src="{% static 'plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js' %}"></script>
+<script src="{% static 'plugins/daterangepicker/daterangepicker.js' %}"></script>
+<script>
+  $('#fecha-entregadas').datetimepicker({
+    format: 'DD/MM/yyyy'
+  });
+</script>
 {% endblock %}

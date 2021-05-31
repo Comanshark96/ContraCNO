@@ -1,20 +1,36 @@
 {% extends 'EntregaDNI/base.html' %}
 
-{% block 'TituloContenido' %}Lista de sobres{% endblock %}
-{% block 'Titulo' %}Lista de sobres{% endblock %}
+{% block 'TituloContenido' %}Sobres de DNIs{% endblock %}
+{% block 'Titulo' %}Sobres{% endblock %}
 
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-12">
     <div class="card card-outline card-orange">
-      <div class="card-footer">
-	<a class="btn btn-block btn-default" href="{% url 'EscanerSobre' %}"><i class="fas fa-plus-circle"></i> Registrar sobre</a>
+      <div class="card-header">
+        <h3 class="card-title text-lg">Registro de sobre</h3>
+      </div>
+      <div class="card-body d-flex justify-content-between">
+	<a class="btn btn-default" href="{% url 'EscanerSobre' %}"><i class="fas fa-plus-circle"></i> Sobre propio</a>
+	<a class="btn btn-default ml-auto" href="{% url 'EscanerSobreUsuario' %}"><i class="fas fa-plus-circle"></i> Sobre de otro</a>
+      </div>
+    </div>
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+	<h3 class="text-lg card-title">Sobres entregados</h3>
+	  <div class="card-tools">
+	    <form class="input-group input-group-sm" action="" method="GET">
+	      <input id="" class="form-control float-rigth" type="text" name="buscar" placeholder="Buscar..." value="{{ request.GET.buscar }}">
+	      <div class="input-group-append">
+		<button class="btn btn-default" type="submit"><i class="fas fa-search"></i></button>
+	      </div>
+	    </form>
+	  </div>
       </div>
       <div class="card-body table-responsive">
         <table class="table table-hover">
           <thead>
 	    <tr>
-	      <th>No.</th>
 	      <th>Sobre</th>
 	      <th>Fecha y hora</th>
 	    </tr>
@@ -22,7 +38,6 @@
           <tbody>
 	    {% for sobre in page_obj %}
 	    <tr>
-	      <td>{{ forloop.counter }}</td>
 	      <td>{{ sobre.codigo }}-{{ sobre.caja.codigo }}</td>
 	      <td>{{ sobre.fecha }} a las {{ sobre.hora | date:'h:i A'}}</td>
 	      <td><a href="{% url 'EliminarSobre' sobre.pk %}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a></td>

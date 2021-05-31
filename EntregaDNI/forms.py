@@ -86,23 +86,4 @@ class FormSobreUsuario(FormSobre):
         return nuevo_sobre
 
 
-class FormEntregadas(forms.Form):
-
-    fecha_entregadas = forms.DateField(required=True, widget=forms.DateInput(attrs={'class': 'form-control datetimepicker',
-                                                                         'placeholder': 'Fecha de consulta',
-                                                                         'data-target': '#fecha-entregadas'}))
-
-
-class FormActaCierre(forms.ModelForm):
-
-    fecha = forms.DateField(required=True, widget=forms.DateInput(attrs={'class':'form-control datetimepicker',
-                                                          'placeholder': 'Fecha de consulta',
-                                                          'data-target': '#fecha'}))
-
-    class Meta:
-        model = models.Centro
-        fields = ('unidad',)
-        widgets = {
-                'unidad': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Escoja una unidad'})
-            }
 

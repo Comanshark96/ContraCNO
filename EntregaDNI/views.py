@@ -7,7 +7,6 @@ from django.views.generic import CreateView, TemplateView, ListView, UpdateView,
 from django.views.decorators.cache import never_cache 
 from django.utils.decorators import method_decorator
 from django.contrib import messages
-from .numero_letras import numero_a_letras
 from . import models, forms
 
 
@@ -35,9 +34,9 @@ class EscanerCaja(CreateView):
         usuario = self.request.user.integrante
         contexto = super().get_context_data(**kwargs)
         if usuario.es_supervisor:
-            contexto['form'].fields['centro'].queryset = models.Centro.objects.filter(unidad__equipo=usuario.equipo_supervisado)
+            contexto['form'].fields['centro'].queryset = models.Centro.objects.filter(equipo=usuario.equipo_supervisado)
         else:
-            contexto['form'].fields['centro'].queryset = models.Centro.objects.filter(unidad__equipo=usuario.unidad.equipo)
+            contexto['form'].fields['centro'].queryset = models.Centro.objects.filter(equipo=usuario.unidad.equipo)
 
         return contexto
 
@@ -46,13 +45,22 @@ class ListaCajas(ListView):
 
     model = models.Caja
     template_name = 'EntregaDNI/lista-cajas.html'
+    paginate_by = 20
 
     def get_queryset(self):
         usuario = self.request.user.integrante
+        query = None
+
         if usuario.es_supervisor:
-            return self.model.objects.filter(centro__unidad__equipo=usuario.equipo_supervisado)
+            query = self.model.objects.filter(centro__equipo=usuario.equipo_supervisado)
         else:
-            return self.model.objects.filter(centro__unidad__equipo=usuario.unidad.equipo)
+            query = self.model.objects.filter(centro__equipo=usuario.unidad.equipo)
+
+        if 'buscar' in self.request.GET and self.request.GET['buscar'] is not None:
+            buscar = self.request.GET['buscar']
+            query = query.filter(Q(codigo__icontains=buscar) | Q(centro__nombre__icontains=buscar))
+
+        return query
 
 class ListaCentros(ListView):
     """ Lista los centros de entrega en una tabla """
@@ -62,10 +70,18 @@ class ListaCentros(ListView):
 
     def get_queryset(self):
         usuario = self.request.user.integrante
+        query = None
+
         if usuario.es_supervisor:
-            return self.model.objects.filter(unidad__equipo=usuario.equipo_supervisado)
+            query = self.model.objects.filter(equipo=usuario.equipo_supervisado)
         else:
-            return self.model.objects.filter(unidad__equipo=usuario.unidad.equipo)
+            query = self.model.objects.filter(equipo=usuario.unidad.equipo)
+
+        if 'buscar' in self.request.GET and self.request.GET['buscar'] is not None:
+            buscar = self.request.GET['buscar']
+            query = query.filter(nombre__icontains=buscar)
+
+        return query
 
 
 class EditarCentro(UpdateView):
@@ -82,9 +98,9 @@ class EditarCentro(UpdateView):
         del_equipo = bool()
 
         if usuario.es_supervisor:
-            del_equipo = usuario.equipo_supervisado == self.get_object().unidad.equipo
+            del_equipo = usuario.equipo_supervisado == self.get_object().equipo
         else:
-            del_equipo = usuario.unidad.equipo == self.get_object().unidad.equipo
+            del_equipo = usuario.unidad.equipo == self.get_object().equipo
             
         if del_equipo:
             return super().dispatch(request, *args, **kwargs)
@@ -104,9 +120,12 @@ class CrearCentro(CreateView):
         usuario = self.request.user.integrante
         centro = form.save(commit=False)
 
-        if not usuario.es_supervisor:
-            centro.unidad = usuario.unidad
-            centro.save()
+        if usuario.es_supervisor:
+            centro.equipo = usuario.equipo_supervisado
+        else:
+            centro.equipo = usuario.equipo
+
+        centro.save()
 
         return redirect(reverse_lazy('ListaCentros'))
 
@@ -150,7 +169,7 @@ class EscanerSobreUsuario(EscanerSobre):
             form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo_supervisado=usuario.equipo_supervisado).exclude(es_supervisor=True)
 
         else:
-            form.fields['usuario'].queryset = models.Integrante.objects.filter(unidad__equipo=usuario.unidad.equipo).exclude(es_supervisor=True)
+            form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo=usuario.unidad.equipo).exclude(es_supervisor=True)
 
 
         if existe_sobre:
@@ -175,11 +194,18 @@ class ListaSobres(ListView):
     def get_queryset(self):
         """ Lista solo los sobres que escaneó el equipo """
         usuario = self.request.user.integrante
+        query = None
 
         if usuario.es_supervisor:
-            return self.model.objects.filter(caja__centro__unidad__equipo=usuario.equipo_supervisado)
+            query = self.model.objects.filter(caja__centro__equipo=usuario.equipo_supervisado)
         else:
-            return self.model.objects.filter(usuario=usuario)
+            query = self.model.objects.filter(usuario=usuario)
+
+        if 'buscar' in self.request.GET and self.request.GET['buscar'] is not None:
+            buscar = self.request.GET['buscar']
+            query = query.filter(Q(codigo__icontains=buscar) | Q(caja__codigo__icontains=buscar))
+
+        return query
 
 
 class EliminarSobre(DeleteView):
@@ -200,136 +226,3 @@ class EliminarSobre(DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(self.request, f'Se ha eliminado el sobre correctamente')
         return super().post(request, *args, **kwargs)
-
-
-class Informes(TemplateView):
-
-    template_name = 'EntregaDNI/informes.html'
-
-    def get_context_data(self, **kwargs):
-        usuario = self.request.user.integrante
-        contexto = super().get_context_data(**kwargs)
-
-        formulario = forms.FormActaCierre()
-        form_entregadas = forms.FormEntregadas()
-
-        if usuario.es_supervisor:
-            formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.equipo_supervisado)
-        else:
-            formulario.fields['unidad'].queryset = models.Unidad.objects.filter(equipo=usuario.unidad.equipo)
-
-
-        contexto['form'] = formulario
-        contexto['entregadas'] = form_entregadas
-        
-        return contexto
-
-@method_decorator(never_cache, 'dispatch')
-class ActaCierre(TemplateView):
-
-    template_name = 'EntregaDNI/acta-cierre.html'
-
-    def get_context_data(self, **kwargs):
-        usuario = self.request.user.integrante
-        contexto = super().get_context_data(**kwargs)
-        formulario = forms.FormActaCierre(self.request.GET)
-        total = 0
-
-        if formulario.is_valid():
-            unidad = formulario.cleaned_data['unidad']
-            fecha = formulario.cleaned_data['fecha']
-            cajas = None
-            resultados = [] 
-            total_apertura = 0
-            total_entregadas = 0
-            total_cierre = 0
-
-            if usuario.es_supervisor:
-                cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.equipo_supervisado, centro__unidad=unidad)
-            else:
-                cajas = models.Caja.objects.filter(centro__unidad__equipo=usuario.unidad.equipo, centro__unidad=unidad)
-
-            for caja in cajas:
-                apertura = caja.cantidad - caja.sobre.filter(fecha__lt=fecha).count()
-                entregadas = caja.sobre.filter(fecha=fecha).count()
-                cierre = apertura - entregadas
-                total_apertura += apertura
-                total_entregadas += entregadas
-                total_cierre += cierre
-                resultados.append({'caja': caja.codigo, 'apertura': apertura, 'entregadas': entregadas, 'cierre': cierre,
-                    'apertura_letras': numero_a_letras(apertura), 'cierre_letras': numero_a_letras(cierre)})
-
-            contexto['resultados'] = resultados
-            contexto['resultados_letras'] = numero_a_letras(len(resultados))
-            contexto['total_apertura'] = total_apertura
-            contexto['total_apertura_letras'] = numero_a_letras(total_apertura)
-            contexto['fecha'] = fecha
-            contexto['total_entregadas'] = total_entregadas
-            contexto['total_cierre'] = total_cierre
-            contexto['total_cierre_letras'] = numero_a_letras(total_cierre)
-            contexto['unidad'] = unidad
-
-        return contexto
-
-class ActaCierreImprimir(ActaCierre):
-
-    template_name = 'EntregaDNI/acta-cierre-print.html'
-
-
-class ActaAperturaImprimir(ActaCierre):
-
-    template_name = 'EntregaDNI/acta-apertura-print.html'
-
-
-@method_decorator(never_cache, 'dispatch')
-class EntregadosUsuario(ListView):
-    """ Detalla la cantidad de sobres entregados por enrolador """
-
-    model = models.User
-    template_name = 'EntregaDNI/entregadas-usuario.html'
-
-    def get_queryset(self):
-        usuario = self.request.user.integrante
-        equipo = None
-
-        if usuario.es_supervisor:
-            equipo = usuario.equipo_supervisado
-        else:
-            equipo = usuario.unidad.equipo
-
-        return self.model.objects.filter(integrante__unidad__equipo=equipo).exclude(integrante__es_supervisor=True)
-
-    def get_context_data(self, **kwargs):
-        usuario = self.request.user.integrante
-        ctx = super().get_context_data(**kwargs)
-        formulario = forms.FormEntregadas(self.request.GET)
-
-        if formulario.is_valid():
-            fecha = formulario.cleaned_data['fecha_entregadas']
-            print(fecha)
-            usuarios = []
-            hoy_total = 0
-            escaneado = 0
-            enrolado = 0
-            total = 0
-
-            for user in ctx['object_list']:
-                nuevo_resultado = {'nombre': user.get_full_name(),
-                                   'hoy': models.Sobre.objects.por_fecha(fecha, user.integrante),
-                                   'escaneado': user.integrante.escaneados.filter(fecha=datetime.today()).count(),
-                                   'enrolado': user.integrante.enrolados.filter(sede__fecha=datetime.today()).count(),
-                                   'total': user.integrante.sobres.count()}
-
-                usuarios.append(nuevo_resultado)
-                total += nuevo_resultado['total']
-                escaneado += nuevo_resultado['escaneado']
-                enrolado += nuevo_resultado['enrolado']
-                hoy_total += nuevo_resultado['hoy']
-
-            ctx['usuarios'] = usuarios
-            ctx['htotal'] = hoy_total
-            ctx['escaneado'] = escaneado
-            ctx['enrolado'] = enrolado
-            ctx['total'] = total
-
-            return ctx

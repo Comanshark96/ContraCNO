@@ -1,7 +1,7 @@
 {% extends 'EntregaDNI/base.html' %}
 
-{% block 'TituloContenido' %}Lista de cajas{% endblock %}
-{% block 'Titulo' %}Lista de cajas{% endblock %}
+{% block 'TituloContenido' %}Cajas de DNIs{% endblock %}
+{% block 'Titulo' %}Cajas{% endblock %}
 
 {% load mathfilters %}
 
@@ -9,10 +9,26 @@
 <div class="row">
   <div class="col-sm-12">
     <div class="card card-outline card-orange">
-      <div class="card-footer">
+      <div class="card-header">
+	<h3 class="card-title text-lg">Registro de cajas</h3>
+      </div>
+      <div class="card-body">
 	{% if user.is_staff or user.integrante.es_supervisor %}
-	<a href="{% url 'EscanerCaja' %}" class="btn btn-default btn-block"><i class="fas fa-plus-circle"></i> Registrar cajas</a>
+	<a href="{% url 'EscanerCaja' %}" class="btn btn-default btn-block"><i class="fas fa-plus-circle"></i> Registrar caja</a>
 	{% endif %}
+      </div>
+    </div>
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+        <h3 class="card-title text-lg">Lista de cajas</h3>
+        <div class="card-tools">
+          <form class="input-group input-group-sm" action="">
+	    <input type="text" name="buscar" placeholder="Buscar..." class="form-control" value="{{ request.GET.buscar }}">
+	    <div class="input-group-append">
+	      <button class="btn btn-default" type="submit"><i class="fas fa-search"></i></button>
+	    </div>
+	  </form>
+        </div>
       </div>
       <div class="card-body table-responsive">
 	<table class="table table-hover">
@@ -20,17 +36,22 @@
 	    <tr>
 	      <th>Código</th>
 	      <th>Centro</th>
-	      <th>Cantidad inicial</th>
-	      <th>Cantidad final</th>
+	      <th>Inicio</th>
+	      <th>Enviadas</th>
+	      <th>Final</th>
 	    </tr>
 	  </thead>
 	  <tbody>
-	    {% for caja in object_list %}
+	    {% for caja in page_obj %}
 	    <tr>
 	      <td>{{ caja.codigo }}</td>
 	      <td>{{ caja.centro.nombre }}</td>
 	      <td>{{ caja.cantidad }}</td>
-	      <td>{{ caja.cantidad | sub:caja.sobre.all.count }}</td>
+	      <td>{{ caja.sobres.all.count }}</td>
+	      <td>{{ caja.cantidad | sub:caja.sobres.all.count }}</td>
+	      <td>
+		<a class="btn btn-sm btn-secondary" href="{#{% url 'DetalleCaja' %}#}"><i class="fas fa-edit text-sm"></i></a>
+	      </td>
 	    </tr>
 	    {% empty %}
 	    <div class="alert alert-info">
@@ -41,6 +62,45 @@
 	  </tbody>
 	</table>
       </div>
+      <div class="card-footer">
+	<nav aria-label="Paginación de lista de sobres">
+	  <ul class="pagination justify-content-center">
+	    {% if page_obj.has_previous %}
+	    <li class="page-item"><a class="page-link" href="?{% if request.GET.buscar != '' %}buscar={{ request.GET.buscar }}&{% endif %}page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+	    {% else %}
+	    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a></li>
+	    {% endif %}
+
+	    {% if page_obj.number|add:'-4' > 1 %}
+	    <li class="page-item"><a class="page-link" href="?{% if request.GET.buscar != '' %}buscar={{ request.GET.buscar }}&{% endif %}page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
+	    {% endif %}
+
+	    {% for i in page_obj.paginator.page_range %}
+	    {% if page_obj.number == i %}
+	    <li class="page-item active" aria-current="page">
+	      <span class="page-link">
+		{{ i }}
+		<span class="sr-only">(currency)</span>
+	      </span>
+	    </li>
+	    {% elif page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+	    <li class="page-item"><a class="page-link" href="?{% if request.GET.buscar != '' %}buscar={{ request.GET.buscar }}&{% endif %}page={{ i }}">{{ i }}</a></li>
+	    {% endif %}
+	    {% endfor %}
+
+	    {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+	    <li class="page-item"><a class="page-link" href="?{% if request.GET.buscar != '' %}buscar={{ request.GET.buscar }}&{% endif %}page={{ page_obj.number|add:'5' }}">&hellip;</a></li>
+	    {% endif %}
+
+	    {% if page_obj.has_next %}
+	    <li class="page-item"><a class="page-link" href="?{% if request.GET.buscar != '' %}buscar={{ request.GET.buscar }}&{% endif %}page={{ page_obj.next_page_number }}">&raquo;</a></li>
+	    {% else %}
+	    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a></li>
+	    {% endif %}
+	  </ul>
+	</nav>
+      </div>
+
     </div>
   </div>
 </div>

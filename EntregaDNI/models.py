@@ -49,7 +49,7 @@ class Centro(models.Model):
     """ Representa un Centro de entrega """
 
     id = models.BigAutoField(primary_key=True)
-    unidad = models.ForeignKey(Unidad, on_delete=models.CASCADE, related_name='centro')
+    equipo = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='centros')
     nombre = models.CharField(max_length=100)
 
 
@@ -62,7 +62,7 @@ class Caja(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     codigo = models.CharField(max_length=7, unique=True)
-    centro = models.ForeignKey(Centro, on_delete=models.CASCADE, related_name='caja')
+    centro = models.ForeignKey(Centro, on_delete=models.CASCADE, related_name='cajas')
     cantidad = models.PositiveSmallIntegerField(default=240)
 
     def __str__(self):
@@ -79,7 +79,7 @@ class Sobre(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     codigo = models.CharField(max_length=9)
-    caja = models.ForeignKey(Caja, on_delete=models.CASCADE, related_name='sobre')
+    caja = models.ForeignKey(Caja, on_delete=models.CASCADE, related_name='sobres')
     fecha = models.DateField(auto_now_add=True)
     hora = models.TimeField(auto_now_add=True)
     usuario = models.ForeignKey(Integrante, on_delete=models.CASCADE, related_name='sobres')

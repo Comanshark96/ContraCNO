@@ -33,16 +33,16 @@
     </ul>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link">
+	<a href="{% url 'EscanerSobre' %}" class="nav-link">
 	  <i class="fas fa-envelope"></i>
 	  <span class="badge badge-success navbar-badge"></span>
 	</a>
       </li>
       <li class="nav-item">
-	<a class="nav-link" href="#"><i class="fas fa-camera"></i><span class="badge badge-danger navbar-badge"></span></a>
+	<a class="nav-link" href="{% url 'EscanerRecibo' %}"><i class="fas fa-camera"></i><span class="badge badge-danger navbar-badge"></span></a>
       </li>
       <li class="nav-item">
-	<a class="nav-link" href="#"><i class="fas fa-qrcode"></i>
+	<a class="nav-link" href="{% url 'EscanerSobreUsuario' %}"><i class="fas fa-qrcode"></i>
 	  <span class="badge badge-warning navbar-badge"></span>
 	</a>
       </li>
@@ -113,13 +113,6 @@
 		  <p>Sobres</p>
 		</a>
 	      </li>
-	      <li class="nav-item">
-		<a class="nav-link" href="{% url 'EscanerSobreUsuario' %}">
-		  <i class="fas fa-qrcode nav-icon"></i>
-		  <p>Escanear sobres</p>
-		</a>
-	      </li>
-	      
             </ul>
           </li>
 	  <li class="nav-item menu-open">
@@ -149,7 +142,16 @@
 	    <a class="nav-link" href="{% url 'Informes' %}">
 	      <i class="fas fa-file nav-icon text-orange"></i>
 		<p class="font-weight-bold">Informes</p>
+		<i class="fas fa-angle-left right"></i>
 	    </a>
+	    <ul class="nav-treeview">
+	      <li class="nav-item">
+		<a class="nav-link" href="{% url 'EntregadosUsuario' %}">
+		  <i class="far fa-circle nav-icon"></i>
+		  <p>Informe diario</p>
+		</a>
+	      </li>
+	    </ul>
 	  </li>
         </ul>
       </nav>

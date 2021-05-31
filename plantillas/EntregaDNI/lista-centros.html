@@ -1,16 +1,33 @@
 {% extends 'EntregaDNI/base.html' %}
 
-{% block 'TituloContenido' %}Lista de centros de entrega{% endblock %}
+{% block 'TituloContenido' %}Centros de entrega{% endblock %}
 {% block 'Titulo' %}Centros de entrega{% endblock %}
 
 {% block 'Contenido' %}
 <div class="row">
   <div class="col-sm-12">
+    {% if user.integrate.es_supervisor or user.is_staff %}
     <div class="card card-outline card-orange">
-      <div class="card-footer">
-	{% if user.is_staff or user.integrante.es_supervisor %}
-	<a class="btn btn-block btn-default" href="{% url 'CrearCentro' %}"><i class="fas fa-plus-circle"></i> Agregar centro</a>
-	{% endif %}
+      <div class="card-header">
+	<h3 class="card-title text-lg">Registro de centros</h3>
+      </div>
+      <div class="card-body">
+	<a class="button btn btn-secondary btn-block" href="{% url 'CrearCentro' %}">
+	  <i class="fas fa-plus-circle"></i>
+	  Añadir centro
+	</a>
+      </div>
+    </div>
+    {% endif %}
+    <div class="card card-outline card-orange">
+      <div class="card-header">
+        <h3 class="card-title text-lg">Lista de centros</h3>
+        <div class="card-tools">
+	  <form class="input-group input-group-sm" action=""> 
+	    <input class="form-control" type="text" placeholder="Buscar..." name="buscar" value="{{ request.GET.buscar }}">
+	    <div class="input-group-append"><button class="btn btn-default" type="submit"><i class="fas fa-search"></i></button></div>
+	  </form>
+	</div>
       </div>
       <div class="card-body table-responsive">
         <table class="table table-hover">
@@ -18,7 +35,6 @@
 	    <tr>
 	      <th>No.</th>
 	      <th>Nombre</th>
-	      <th>Acciones</th>
 	    </tr>
 	  </thead>
           <tbody>
@@ -28,7 +44,7 @@
 	      <td>{{ centro.nombre }}</td>
 	      <td class="text-center">
 		{% if user.is_staff or user.integrante.es_supervisor %}
-		<a class="btn btn-primary text-sm btn-sm" href="{% url 'EditarCentro' centro.pk %}"><i class="fas fa-edit"></i></a>
+		<a class="btn btn-secondary text-sm btn-sm" href="{% url 'EditarCentro' centro.pk %}"><i class="fas fa-edit"></i></a>
 		{% endif %}
 	      </td>
 	      {% empty %}

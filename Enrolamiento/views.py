@@ -65,9 +65,9 @@ class ListaSedes(ListView):
         query = None
 
         if usuario.es_supervisor:
-            query = m.Sede.objects.filter(unidades__equipo=usuario.equipo_supervisado)
+            query = m.Sede.objects.filter(unidades__equipo=usuario.equipo_supervisado).distinct()
         else:
-            query = m.Sede.objects.filter(unidades__equipo=usuario.unidad.equipo)
+            query = m.Sede.objects.filter(unidades__equipo=usuario.unidad.equipo).distinct()
 
         return query
 
