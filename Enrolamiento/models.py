@@ -10,26 +10,7 @@ class Sede(models.Model):
     colonia = models.CharField(max_length=100)
     nombre = models.CharField(max_length=100)
     fecha = models.DateField(default=now)
-
     unidades = models.ManyToManyField(Unidad, related_name='sedes')
-
-    def informe(self):
-        """ Crea un informe de la sede """
-
-        informe = {'unidades': [], 'enrolados': 0} 
-
-        for unidad in self.unidades.all():
-            recibos = unidad.recibos.filter(sede=self)
-            total = recibos.count()
-
-            informe['unidades'].append({
-                'unidad': unidad,
-                'primer_recibo': recibos.first(),
-                'ultimo_recibo': recibos.last(),
-                'total': total})
-            informe['enrolados'] += total
-
-        return informe
 
     def __str__(self):
         return f'{self.colonia} - {self.nombre}'
@@ -38,20 +19,19 @@ class Sede(models.Model):
         ordering = ('-fecha',)
 
 
-class Recibo(models.Model):
-    """ Representa un recibo de enrolamiento """
+class Enrolamiento(models.Model):
+    """ Representa un dato de enrolamiento """
 
     id = models.BigAutoField(primary_key=True)
     sede = models.ForeignKey(Sede, on_delete=models.CASCADE, related_name='recibos', editable=False)
-    codigo = models.CharField(max_length=30, unique=True)
-    hora = models.TimeField(auto_now_add=True)
+    recibo_inicio = models.CharField(max_length=30, unique=True)
+    recibo_final = models.CharField(max_length=30, unique=True)
 
     # Enroladores
-    unidad = models.ForeignKey(Unidad, on_delete=models.CASCADE, related_name='recibos')
-    usuario = models.ForeignKey(Integrante, on_delete=models.CASCADE, related_name='enrolados')
+    unidad = models.ForeignKey(Unidad, on_delete=models.CASCADE, related_name='enrolamientos')
 
     def __str__(self):
-        return f'{self.sede.nombre}: {self.codigo}'
+        return f'Unidad {self.unidad.numero} en {self.sede.nombre}'
 
     class Meta:
         ordering = ('hora',)
