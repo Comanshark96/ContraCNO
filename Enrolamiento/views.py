@@ -74,14 +74,13 @@ class ListaSedes(ListView):
 class EscanerRecibo(CreateView):
     """ Escanea los recibos de enrolamiento """
 
-    model = m.Recibo
+    model = m.Enrolamiento
     template_name = 'Enrolamiento/escaner-recibo.html'
     form_class = f.FormularioRecibo
     success_url = reverse_lazy('EscanerRecibo')
 
     def form_valid(self, form):
         recibo = form.save(commit=False)
-        recibo.usuario = self.request.user.integrante
         recibo.save()
         messages.success(self.request, 'Se ha registrado el recibo correctamente')
 
