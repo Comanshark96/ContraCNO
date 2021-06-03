@@ -32,6 +32,3 @@ class Enrolamiento(models.Model):
 
     def __str__(self):
         return f'Unidad {self.unidad.numero} en {self.sede.nombre}'
-
-    class Meta:
-        ordering = ('hora',)
