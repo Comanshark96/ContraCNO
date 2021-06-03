@@ -29,7 +29,7 @@ class FormularioRecibo(forms.ModelForm):
         model = m.Enrolamiento
         fields = ('recibo_inicio', 'recibo_final',)
         widgets = {
-            'reicibo_inicio': forms.TextInput(attrs={'class': 'form-control'})
+            'reicibo_inicio': forms.TextInput(attrs={'class': 'form-control'}),
             'reicibo_final': forms.TextInput(attrs={'class': 'form-control'})
         }
 
