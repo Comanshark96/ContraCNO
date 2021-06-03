@@ -113,27 +113,23 @@ class EntregadosUsuario(ListView):
             usuarios = []
             hoy_total = 0
             escaneado = 0
-            enrolado = 0
             total = 0
 
             for user in ctx['object_list']:
                 nuevo_resultado = {'nombre': user.get_full_name(),
                                    'hoy': Sobre.objects.por_fecha(fecha, user.integrante),
                                    'escaneado': user.integrante.escaneados.filter(fecha=fecha).count(),
-                                   'enrolado': user.integrante.enrolados.filter(sede__fecha=fecha).count(),
                                    'total': user.integrante.sobres.count()}
 
                 usuarios.append(nuevo_resultado)
                 total += nuevo_resultado['total']
                 escaneado += nuevo_resultado['escaneado']
-                enrolado += nuevo_resultado['enrolado']
                 hoy_total += nuevo_resultado['hoy']
 
             ctx['entregadas'] = formulario
             ctx['usuarios'] = usuarios
             ctx['htotal'] = hoy_total
-            ctx['escaneado'] = escaneado
-            ctx['enrolado'] = enrolado
+            ctx['escaneado'] = escaneado            
             ctx['total'] = total
 
             return ctx
