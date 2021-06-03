@@ -54,7 +54,7 @@ class FormularioRecibo(forms.ModelForm):
         return codigo
     
     def clean_recibo_inicio(self):
-        return validar_recibo(self.cleaned_data['recibio_inicio'])
+        return validar_recibo(self.cleaned_data['recibo_inicio'])
     
     def clean_recibo_final(self):
         return validar_recibo(self.cleaned_data['recibo_final'])
