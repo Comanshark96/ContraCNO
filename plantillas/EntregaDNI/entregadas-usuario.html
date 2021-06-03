@@ -30,24 +30,21 @@
 	  <thead>
 	    <tr>
 	      <th>Enrolador</th>
-	      <th>Escaneados</th>
 	      <th>Entregados</th>
-	      <th>Enrolados</th>
+	      <th>Escaneados</th>
 	    </tr>
 	  </thead>
 	  <tbody>
 	    <tr class="font-weight-bold bg-info">
 	      <td>Total:</td>
-	      <td>{{ escaneado }}</td>
 	      <td>{{ htotal }}</td>
-	      <td>{{ enrolado }}</td>
+	      <td>{{ escaneado }}</td>	      
 	    </tr>
 	    {% for usuario in usuarios|dictsortreversed:'hoy' %}
 	    <tr>
-	      <td>{{ usuario.nombre }}</td>
-	      <td>{{ usuario.escaneado }}</td>
+	      <td>{{ usuario.nombre }}</td>	      
 	      <td>{{ usuario.hoy }}</td>
-	      <td>{{ usuario.enrolado }}</td>
+	      <td>{{ usuario.escaneado }}</td>
 	    </tr>
 	    {% endfor %}
 	  </tbody>
