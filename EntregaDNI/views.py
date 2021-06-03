@@ -17,7 +17,6 @@ def inicio(request, *args, **kwargs):
 @never_cache
 def sobres_hoy(request, *args, **kwargs):
     sobres = request.user.integrante.sobres.filter(fecha=datetime.today()).count()
-    enrolados = request.user.integrante.enrolados.filter(sede__fecha=datetime.today()).count()
     escaneados = request.user.integrante.escaneados.filter(fecha=datetime.today()).count()
     return HttpResponse(str([sobres, enrolados, escaneados]))
     
