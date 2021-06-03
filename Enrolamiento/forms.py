@@ -26,14 +26,15 @@ class FormularioRecibo(forms.ModelForm):
     """ Formulario para registrar recibo """
 
     class Meta:
-        model = m.Recibo
-        fields = ('codigo',)
+        model = m.Enrolamiento
+        fields = ('recibo_inicio', 'recibo_final',)
         widgets = {
-            'codigo': forms.TextInput(attrs={'class': 'form-control'})
+            'reicibo_inicio': forms.TextInput(attrs={'class': 'form-control'})
+            'reicibo_final': forms.TextInput(attrs={'class': 'form-control'})
         }
 
-    def clean_codigo(self):
-        codigo = self.cleaned_data['codigo']
+    def validar_recibo(self, codigo):
+        """ Valida el codigo del recibo """
         
         try:
             unidad = m.Unidad.objects.get(kit=codigo[:4])
@@ -51,17 +52,24 @@ class FormularioRecibo(forms.ModelForm):
             raise forms.ValidationError('La unidad no está habilitada para enrolamiento')
 
         return codigo
+    
+    def clean_recibo_inicio(self):
+        return validar_recibo(self.cleaned_data['recibio_inicio'])
+    
+    def clean_recibo_final(self):
+        return validar_recibo(self.cleaned_data['recibo_final'])
 
     def save(self, commit=True):
         """ Añade la información de la estación en la sede """
-
-        codigo = self.cleaned_data['codigo']
-        unidad = m.Unidad.objects.get(kit=codigo[:4])
-        nuevo_recibo = m.Recibo(codigo=codigo)
-        nuevo_recibo.unidad = unidad
-        nuevo_recibo.sede = m.Sede.objects.get(fecha=datetime.date.today(), unidades=unidad)
+        
+        recibo_inicio = self.cleaned_data['recibo_inicio']
+        recibo_final = self.cleaned_data['recibo_final']
+        unidad = m.Unidad.objects.get(kit=recibo_inicio[:4])
+        nuevo_enrol = m.Enrolamiento(recibo_inicio=recibo_inicio, recibo_final=recibo_final)
+        nuevo_enrol.unidad = unidad
+        nuevo_enrol.sede = m.Sede.objects.get(fecha=datetime.date.today(), unidades=unidad)
 
         if commit:
-            nuevo_recibo.save()
+            nuevo_enrol.save()
 
-        return nuevo_recibo
+        return nuevo_enrol
