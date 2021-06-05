@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib import messages
+from django.db.models import Q
 from . import models as m, forms as f
 
 
@@ -44,7 +45,7 @@ class EliminarSede(DeleteView):
     success_url = reverse_lazy('ListaSedes')
 
     def post(self, request, *args, **kwargs):
-        messages.success(request, f'Se ha eliminado la sede {{ object.nombre }}')
+        messages.success(request, f'Se ha eliminado la sede {self.get_object().nombre}')
         return super().post(request, *args, **kwargs)
 
 class DetalleSede(DetailView):
@@ -65,9 +66,11 @@ class ListaSedes(ListView):
         query = None
 
         if usuario.es_supervisor:
-            query = m.Sede.objects.filter(unidades__equipo=usuario.equipo_supervisado).distinct()
+            query = m.Sede.objects.filter(Q(unidades__equipo=usuario.equipo_supervisado) |
+                                          Q(entregadas__unidad__equipo=usuario.equipo_supervisado)).distinct()
         else:
-            query = m.Sede.objects.filter(unidades__equipo=usuario.unidad.equipo).distinct()
+            query = m.Sede.objects.filter(Q(unidades__equipo=usuario.unidad.equipo) |
+                                          Q(entregadas__unidad__equipo=usuario.unidad.equipo)).distinct()
 
         return query
 

@@ -15,92 +15,101 @@
 	<form id="FormSobre" action="" enctype="multipart/data-form" method="POST">
 	{% csrf_token %}
 	<div class="form-group">
-	  <div class="input-gorup">
+	  <div class="input-group">
 	     {{ form.recibo_inicio }}
 	     <div class="input-group-append">
-		<button id="inicio" class="btn btn-primary" type="button"><i class="far fa-qrcode"></i></button>
-	      </div>	   
+		<button id="inicio" class="btn btn-primary" type="button"><i class="fas fa-qrcode"></i></button>
+	      </div>
 	  </div>
 	  {% if form.errors.recibo_inicio %}<span class="text-sm text-danger">{{ form.errors.recibo_inicio }}</span>{% endif %}
 	</div>
 	<div class="form-group">
-	  <div class="input-gorup">
+	  <div class="input-group">
 	     {{ form.recibo_final }}
 	     <div class="input-group-append">
-		<button id="final" class="btn btn-primary" type="button"><i class="far fa-qrcode"></i></button>
-	      </div>	   
+		<button id="final" class="btn btn-primary" type="button"><i class="fas fa-qrcode"></i></button>
+	      </div>
 	  </div>
 	  {% if form.errors.recibo_final %}<span class="text-sm text-danger">{{ form.errors.recibo_final }}</span>{% endif %}
+	</div>
+	<div class="form-group">
+	    {{ form.cantidad }}
+	    {% if form.errors.cantidad %}<span class="text-sm text-danger">{{ form.errors.cantidad }}</span>{% endif %}
 	</div>
 	</form>
       </div>
       <div class="card-footer">
 	<button class="btn btn-success btn-block" type="submit" form="FormSobre">Registrar</button>
-	<a href="{% url 'ListaSedes' %}" class="btn btn-danger btn-block>Cancelar</a>
+	<a href="{% url 'ListaSedes' %}" class="btn btn-danger btn-block">Cancelar</a>
       </div>
     </div>
   </div>
   <div class="col-sm-3"></div>
 </div>
 <script src="{% static 'plugins/html5-qrcode/html5-qrcode.min.js' %}"></script>
-<script>
-  // Inicializando escaner
-  const escaner = new Html5Qrcode('escaner');
-  var formulario;
-  
-  $('#inicio').click(() => formulario = $('id_recibo_inicio'));
-  $('#final').click(() => formulario = $('id_recibo_final'));
-
-  // Funciones de proceso de QR
-  const scanSuccess = (qrmessage) => {
-    const re = /[10]{1}[0-9]{3}[1-9]{1}[0-9]{3}[0-9]{5}\|[0-9]{30}/
-
-    if (re.test(qrmessage)) {
-      formulario.val(qrmessage.substring(14, 44));
-      $('#form-modal').modal('hidde');
-      escaner.stop();
-    }
-  }
-  const scanFailure = (error) => console.log(error);
-  
-  const iniciarEscaner = () => {
-    Html5Qrcode.getCameras().then(devices => {
-	if (devices && devices.length) {
-	  var cameraId = devices[devices.length - 1].id;
-	  escaner.start(cameraId, {fps:10, qrbox: 125}, scanSuccess)
-	}
-      }).catch(err => {
-	Swal.fire({
-	  title: '¡Ups!',
-	  text: 'Al parecer hubo un error con la cámara.\n' + err,
-	  icon: 'error'});
-      });
-  }
-</script>
 {% endblock %}
 {% block 'OtrosGuiones' %}
 <script>
-  {% if form.errors %}
-  $('#form-modal').modal('show');
-  Swal.fire({
-    title: '¡Ups!',
-    text: 'Ocuerrieron algunos errores al registrar el sobre',
-    icon: 'error'
-  });
-  {% endif %}
+    var formulario;
+    const escaner = new Html5Qrcode('escaner'); // Inicializando escaner
 
-  $('#form-modal').on('show.bs.modal', function () {
-    iniciarEscaner();    
-  });
-  $('#form-modal').on('hide.bs.modal', function() {
-    escaner.stop();
-    $('#escaner').children().remove();
-  });
-  
-  $('form').submit(function() {
-    const overlay = '<div class="overlay dark text-center"><i class="fas fa-2x fa-sync fa-spin" style="margin-top: 20%;"></i></div>';
-    $('.card').append(overlay);
-  });
+    // Funciones de proceso de QR
+    const scanSuccess = (qrmessage) => {
+        const re = /[10]{1}[0-9]{3}[1-9]{1}[0-9]{3}[0-9]{5}\|[0-9]{30}/
+
+        if (re.test(qrmessage)) {
+          formulario.val(qrmessage.substring(14, 44));
+          $('#form-modal').modal('hide');
+          escaner.stop();
+        }
+    }
+
+    const scanFailure = (error) => console.log(error);
+
+    const iniciarEscaner = () => {
+        Html5Qrcode.getCameras().then(devices => {
+	    if (devices && devices.length) {
+	    var cameraId = devices[devices.length - 1].id;
+	    escaner.start(cameraId, {fps:10, qrbox: 125}, scanSuccess)
+	    }
+      }).catch(err => {
+    	Swal.fire({
+    	  title: '¡Ups!',
+    	  text: 'Al parecer hubo un error con la cámara.\n' + err,
+    	  icon: 'error'});
+          });
+    };
+
+    $('#inicio').click(() => {
+        $('.modal').modal('show');
+        formulario = $('#id_recibo_inicio');
+    });
+
+    $('#final').click(() => {
+        $('.modal').modal('show');
+        formulario = $('#id_recibo_final');
+    });
+
+    {% if form.errors %}
+      Swal.fire({
+        title: '¡Ups!',
+        text: 'Ocuerrieron algunos errores al registrar el sobre',
+        icon: 'error'
+      });
+      {% endif %}
+
+      $('#form-modal').on('show.bs.modal', function () {
+        iniciarEscaner();
+      });
+      $('#form-modal').on('hide.bs.modal', function() {
+        escaner.stop();
+        $('#escaner').children().remove();
+      });
+
+      $('form').submit(function() {
+        const overlay = '<div class="overlay dark text-center"><i class="fas fa-2x fa-sync fa-spin" style="margin-top: 20%;"></i></div>';
+        $('.card').append(overlay);
+      });
 </script>
 {% endblock %}
 {% block 'Modales' %}

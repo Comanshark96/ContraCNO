@@ -5,7 +5,7 @@
 {% block 'Contenido' %}
 <div class="row">
   <div class="card col-sm-12 card-outline card-orange">
-    <div class="card-body">
+    <div class="card-body table-responsive">
       {% if user.es_supervisor or user.is_staff %}
       <a class="btn btn-default btn-block mb-1" href="{% url 'CrearSede' %}"><i class="fas fa-plus-circle"></i> Agregar sede</a>
       {% endif %}
@@ -15,6 +15,7 @@
 	    <th>Nombre</th>
 	    <th>Fecha</th>
 	    <th>Enrolados</th>
+	    <th>Entregados</th>
 	  </tr>
 	</thead>
 	<tbody>
@@ -22,7 +23,8 @@
 	  <tr>
 	    <td>{{ sede.nombre }} de {{ sede.colonia }}</td>
 	    <td>{{ sede.fecha }}</td>
-	    <td>{{ sede.informe.enrolados }}</td>
+	    <td>{{ sede.total }}</td>
+	    <td>{{ sede.total_entregadas }}</td>
 	    <td class="text-sm">
 	      <a class="btn sm btn-primary" href="{% url 'DetalleSede' sede.pk %}"><i class="fas fa-eye"></i></a>
 	      {% if user.is_staff or user.integrante.es_supervisor %}

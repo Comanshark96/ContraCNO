@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, TemplateView, ListView, UpdateView, DeleteView
-from django.views.decorators.cache import never_cache 
+from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib import messages
 from . import models, forms
@@ -19,7 +19,7 @@ def sobres_hoy(request, *args, **kwargs):
     sobres = request.user.integrante.sobres.filter(fecha=datetime.today()).count()
     escaneados = request.user.integrante.escaneados.filter(fecha=datetime.today()).count()
     return HttpResponse(str([sobres, escaneados]))
-    
+
 class EscanerCaja(CreateView):
 
     model = models.Caja
@@ -100,7 +100,7 @@ class EditarCentro(UpdateView):
             del_equipo = usuario.equipo_supervisado == self.get_object().equipo
         else:
             del_equipo = usuario.unidad.equipo == self.get_object().equipo
-            
+
         if del_equipo:
             return super().dispatch(request, *args, **kwargs)
         else:
@@ -147,7 +147,7 @@ class EscanerSobre(CreateView):
             sobre.usuario = self.request.user.integrante
             sobre.save()
             messages.success(self.request, f'El {sobre} se registró correctamente')
-        
+
         return redirect(self.success_url)
 
 
@@ -157,7 +157,7 @@ class EscanerSobreUsuario(EscanerSobre):
     form_class = forms.FormSobreUsuario
     template_name = 'EntregaDNI/escaner-sobre-usuario.html'
     success_url = reverse_lazy('EscanerSobreUsuario')
-    
+
     def form_valid(self, form):
         sobre = form.save(commit=False)
         usuario = self.request.user.integrante
@@ -168,7 +168,7 @@ class EscanerSobreUsuario(EscanerSobre):
             form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo_supervisado=usuario.equipo_supervisado).exclude(es_supervisor=True)
 
         else:
-            form.fields['usuario'].queryset = models.Integrante.objects.filter(equipo=usuario.unidad.equipo).exclude(es_supervisor=True)
+            form.fields['usuario'].queryset = models.Integrante.objects.filter(unidad__equipo=usuario.unidad.equipo).exclude(es_supervisor=True)
 
 
         if existe_sobre:
@@ -179,7 +179,7 @@ class EscanerSobreUsuario(EscanerSobre):
 
             sobre.save()
             messages.success(self.request, f'El {sobre} se registró correctamente para {sobre.usuario.usuario.get_full_name()}')
-        
+
         return redirect(self.success_url)
 
 

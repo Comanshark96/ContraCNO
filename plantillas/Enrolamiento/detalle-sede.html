@@ -8,32 +8,32 @@
     <div class="info-box bg-info">
       <span class="info-box-icon"><i class="fas fa-users"></i></span>
       <div class="info-box-content">
-	<h2>Total de enrolamientos: {{ object.informe.enrolados }}</h2>
+	<h2>Total de enrolamientos: {{ object.total }}</h2>
       </div>
     </div>
   </div>
 </div>
 <div class="row d-flex align-items-stretch justify-content-center">
-  {% for unidad in object.informe.unidades %}
+  {% for enrol in object.recibos.all %}
   <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
     <div class="card card-outline card-orange">
       <div class="card-header">
-	<h3>Unidad {{ unidad.unidad.numero }} (kit {{ unidad.unidad.kit }})</h3>
+	<h3>Unidad {{ enrol.unidad.numero }} (kit {{ enrol.unidad.kit }})</h3>
       </div>
       <div class="card-body text-lg">
 	<p>
 	  <span class="font-weight-bold" >1er recibo:</span>
-	  <span data-toggle="popover" data-placement="right" data-content="{{unidad.primer_recibo.codigo}}">
-	    {{ unidad.primer_recibo.codigo | slice:'-7:' }}
+	  <span data-toggle="popover" data-placement="top" data-content="{{enrol.recibo_inicio}}">
+	    {{ enrol.recibo_inicio | slice:'-7:' }}
 	  </span>
 	</p>
 	<p>
 	  <span class="font-weight-bold" >2do recibo:</span>
-	  <span data-toggle="popover" data-placement="right" data-content="{{unidad.ultimo_recibo.codigo}}">
-	    {{ unidad.ultimo_recibo.codigo | slice:'-7:' }}
+	  <span data-toggle="popover" data-placement="top" data-content="{{enrol.recibo_final}}">
+	    {{ enrol.recibo_final | slice:'-7:' }}
 	  </span>
 	</p>
-	  <span class="font-weight-bold">Total:</span> {{ unidad.total }}
+	  <span class="font-weight-bold">Total:</span> {{ enrol.cantidad }}
 	</p>
       </div>
     </div>
