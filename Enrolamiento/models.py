@@ -1,6 +1,6 @@
 from django.utils.timezone import now
 from django.db import models
-from EntregaDNI.models import Unidad, Integrante
+from EntregaDNI.models import Unidad, Integrante, Domiciliarias
 
 
 class Sede(models.Model):
@@ -20,11 +20,13 @@ class Sede(models.Model):
         """ Devuelve el total de DNIs entregadas por sede """
 
         suma = 0
+        
+        dom = Domiciliarias.objects.filter(fecha=self.fecha).first()
 
         for integrante in self.entregadas.all():
             suma += integrante.sobres.filter(fecha=self.fecha).count()
 
-        return suma
+        return suma - dom.informe()['total']
 
         return
     def total(self):
