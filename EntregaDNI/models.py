@@ -61,7 +61,7 @@ class Caja(models.Model):
     """ Representa una caja de sobres """
 
     id = models.BigAutoField(primary_key=True)
-    codigo = models.CharField(max_length=7, unique=True)
+    codigo = models.CharField(max_length=7)
     centro = models.ForeignKey(Centro, on_delete=models.CASCADE, related_name='cajas')
     cantidad = models.PositiveSmallIntegerField(default=240)
 
