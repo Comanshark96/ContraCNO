@@ -47,4 +47,8 @@ urlpatterns = [
     path('sedes/crear', login_required(enrol.CrearSede.as_view()), name='CrearSede'),
     path('sedes/<int:pk>/editar', login_required(enrol.EditarSede.as_view()), name='EditarSede'),
     path('sedes/<int:pk>/eliminar', login_required(enrol.EliminarSede.as_view()), name='EliminarSede'),
+    path('domiciliarias', login_required(views.ListaDomiciliarias.as_view()), name='ListaDomiciliarias'),
+    path('domiciliarias/crear', login_required(views.CrearDomiciliaria.as_view()), name='CrearDomiciliaria'),
+    path('domiciliarias/<int:pk>/editar', login_required(views.EditarDomiciliaria.as_view()), name='EditarDomiciliaria'),
+    path('domiciliarias/<int:pk>/eliminar', login_required(views.EliminarDomiciliaria.as_view()), name='EliminarDomiciliaria'),
 ]

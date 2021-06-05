@@ -94,3 +94,24 @@ class Sobre(models.Model):
         ordering = ('-fecha', '-hora',)
 
 
+class Domiciliarias(models.Model):
+    """ Representa una entrega de DNI domiciliarias """
+
+    integrantes = models.ManyToManyField(Integrante, related_name='domiciliarias')
+    fecha = models.DateField(auto_now_add=True)
+    hora_inicio = models.TimeField()
+    hora_final = models.TimeField()
+
+    def informe(self):
+        informe = {'usuarios': [], 'total': 0}
+
+        for usuario in self.integrantes.all():
+            usuario_dict = {'nombre': usuario.usuario.get_full_name(),
+                            'sobres': usuario.sobres.filter(fecha=self.fecha,
+                                                            hora__gte=self.hora_inicio,
+                                                            hora__lte=self.hora_final)}
+
+            informe['total'] += usuario_dict['sobres'].count()
+            informe['usuarios'].append(usuario_dict)
+
+        return informe

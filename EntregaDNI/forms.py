@@ -1,3 +1,4 @@
+import datetime
 from django import forms
 from django.shortcuts import get_object_or_404
 from . import models
@@ -86,4 +87,29 @@ class FormSobreUsuario(FormSobre):
         return nuevo_sobre
 
 
+class FormularioDomiciliaria(forms.ModelForm):
+    """ Formulario para crear/editar domiciliarias """
 
+    def __init__(self, edicion=False, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['hora_inicio'].input_formats = ('%I:%M %p',)
+        self.fields['hora_final'].input_formats = ('%I:%M %p',)
+
+        if not edicion:
+            self.fields['integrantes'].queryset = models.Integrante.objects.exclude(sedes__fecha=datetime.date.today())
+
+    class Meta:
+        model = models.Domiciliarias
+        fields = ('integrantes', 'hora_inicio', 'hora_final',)
+
+
+        widgets = {
+            'hora_inicio': forms.TimeInput(attrs={'class': 'form-control datetimepicker-input',
+                                                  'placeholder': 'Hora de inicio',
+                                                  'data-target': '#hora_inicio'}, format='%I:%M %p'),
+            'hora_final': forms.TimeInput(attrs={'class': 'form-control datetimepicker-input',
+                                                 'placeholder': 'Hora final',
+                                                 'data-target': '#hora_final'}, format='%I:%M %p'),
+            'integrantes': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            }

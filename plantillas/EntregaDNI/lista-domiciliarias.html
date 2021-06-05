@@ -1,0 +1,83 @@
+{% extends 'EntregaDNI/base.html' %}
+{% block 'Titulo' %}Domiciliarias{% endblock %}
+{% block 'TituloContenido' %}Domiciliarias{% endblock %}
+
+{% block 'Contenido' %}
+<div class="row">
+  <div class="card col-sm-12 card-outline card-orange">
+    <div class="card-body table-responsive">
+      {% if user.es_supervisor or user.is_staff %}
+      <a class="btn btn-default btn-block mb-1" href="{% url 'CrearDomiciliaria' %}"><i class="fas fa-plus-circle"></i> Agregar domiciliaria</a>
+      {% endif %}
+      <table class="table table-hover">
+	<thead>
+	  <tr>
+	    <th>Enroladores</th>
+	    <th>Fecha</th>
+	    <th>Entregados</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  {% for domicilio in object_list %}
+	  <tr>
+	    <td>
+	      {% for enrolador in domicilio.integrantes.all %}
+	      {{ enrolador }}{% if not forloop.last %}, {% endif %}
+	      {% endfor %}
+	    </td>
+	    <td>{{ domicilio.fecha }}</td>
+	    <td>{{ domicilio.informe.total }}</td>
+	    <td class="text-sm">
+	      {% if user.is_staff or user.integrante.es_supervisor %}
+	      <a class="btn btn-secondary" href="{% url 'EditarDomiciliaria' domicilio.pk %}"><i class="fas fa-edit"></i></a>
+	      <a class="btn btn-danger" href="{% url 'EliminarDomiciliaria' domicilio.pk %}"><i class="fas fa-trash"></i></a>
+	      {% endif %}
+	    </td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+	<nav aria-label="Paginación de lista de sobres">
+	  <ul class="pagination justify-content-center">
+	    {% if page_obj.has_previous %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+	    {% else %}
+	    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a></li>
+	    {% endif %}
+
+	    {% if page_obj.number|add:'-4' > 1 %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
+	    {% endif %}
+
+	    {% for i in page_obj.paginator.page_range %}
+	    {% if page_obj.number == i %}
+	    <li class="page-item active" aria-current="page">
+	      <span class="page-link">
+		{{ i }}
+		<span class="sr-only">(currency)</span>
+	      </span>
+	    </li>
+	    {% elif page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+	    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+	    {% endif %}
+	    {% endfor %}
+
+	    {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'5' }}">&hellip;</a></li>
+	    {% endif %}
+
+	    {% if page_obj.has_next %}
+	    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+	    {% else %}
+	    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a></li>
+	    {% endif %}
+	  </ul>
+	</nav>
+      </div>
+
+  </div>
+</div>
+
+{% endblock %}

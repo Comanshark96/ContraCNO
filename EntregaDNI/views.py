@@ -225,3 +225,71 @@ class EliminarSobre(DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(self.request, f'Se ha eliminado el sobre correctamente')
         return super().post(request, *args, **kwargs)
+
+
+class ListaDomiciliarias(ListView):
+    """ Lista las visitas domiciliarias para entrega """
+
+    template_name = 'EntregaDNI/lista-domiciliarias.html'
+    model = models.Domiciliarias
+    paginate_by = 20
+
+    def get_queryset(self):
+        usuario = self.request.user.integrante
+        query = None
+
+        if usuario.es_supervisor:
+            query = self.model.objects.filter(integrantes__unidad__equipo=usuario.equipo_supervisado).distinct()
+        else:
+            query = self.model.objects.filter(integrantes__unidad__equipo=usuario.unidad.equipo).distinct()
+        
+        if 'buscar' in self.request.GET and self.request.GET['buscar'] is not None:
+            buscar = self.request.GET['buscar']
+            query = query.filter(Q(integrantes__usuario__first_name=buscar) |
+                                 Q(integrante__usuario__last_name=buscar))
+
+        return query
+
+
+class CrearDomiciliaria(CreateView):
+    """ Crea una sede de enrolamiento """
+
+    model = models.Domiciliarias
+    form_class = forms.FormularioDomiciliaria
+    template_name = 'EntregaDNI/crear-domiciliaria.html'
+    success_url = reverse_lazy('ListaDomiciliarias')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Se ha creado una domiciliaria correctamente')
+        return super().form_valid(form)
+
+
+class EditarDomiciliaria(UpdateView):
+
+    model = models.Domiciliarias
+    form_class = forms.FormularioDomiciliaria
+    template_name = 'EntregaDNI/crear-domiciliaria.html'
+    success_url = reverse_lazy('ListaDomiciliarias')
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+
+        return form_class(True, **self.get_form_kwargs())
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Se ha editado correctamente')
+        return super().form_valid(form)
+
+
+class EliminarDomiciliaria(DeleteView):
+    """ Elimina una domiciliaria"""
+
+    model = models.Domiciliarias
+    template_name = 'EntregaDNI/eliminar-domiciliaria.html'
+    success_url = reverse_lazy('ListaDomiciliarias')
+
+    def post(self, request, *args, **kwargs):
+        messages.success(request, f'Se ha eliminado la domiciliaria')
+        return super().post(request, *args, **kwargs)
+

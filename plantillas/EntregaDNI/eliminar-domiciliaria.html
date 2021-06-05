@@ -1,0 +1,21 @@
+{% extends 'EntregaDNI/base.html' %}
+{% block 'Titulo' %}Eliminar domiciliaria{% endblock %}
+{% block 'TituloContenido' %}Eliminar domiciliaria{% endblock %}
+{% block 'Contenido' %}
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <div class="alert alert-warning">
+            <form action="" method="post">
+                {% csrf_token %}
+		<h3><i class="fas fa-exclamation-triangle"></i> ¿Está seguro que desea eliminar la domiciliaria del {{ object.fecha }}  de la  {{ object.colonia }}?</h3>
+                <div class="row justify-content-between">
+                    <input type="submit" class="btn btn-success" value="Sí, estoy seguro">
+                    <a class="btn btn-primary" href="{% url 'ListaDomiciliarias' %}">No, regresar a la lista</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+{% endblock %}
