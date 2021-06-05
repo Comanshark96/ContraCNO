@@ -20,13 +20,18 @@ class Sede(models.Model):
         """ Devuelve el total de DNIs entregadas por sede """
 
         suma = 0
+        suma_dom = 0
         
-        dom = Domiciliarias.objects.filter(fecha=self.fecha).first()
+        dom = Domiciliarias.objects.filter(fecha=self.fecha)
+
+        if dom:
+            for d in dom:
+                suma_dom += d.informe()['total']
 
         for integrante in self.entregadas.all():
             suma += integrante.sobres.filter(fecha=self.fecha).count()
 
-        return suma - dom.informe()['total']
+        return suma - suma_dom
 
         return
     def total(self):
