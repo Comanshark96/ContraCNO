@@ -24,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '2y^rjs2(_!c9jpzr$o%lcet7t35)+3d-5+tnqkpos%4u55e&*6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['comanshark.pythonanywhere.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -79,11 +79,8 @@ WSGI_APPLICATION = 'ContraCNO.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'comanshark$mayo',
-        'USER': 'comanshark',
-        'PASSWORD': 'I@mSh@rk21!_mysql',
-        'HOST': 'comanshark.mysql.pythonanywhere-services.com',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -129,3 +126,4 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 LOGOUT_REDIRECT_URL = LOGIN_URL = reverse_lazy('Ingreso')
 LOGIN_REDIRECT_URL = reverse_lazy('ListaCentros')
+
