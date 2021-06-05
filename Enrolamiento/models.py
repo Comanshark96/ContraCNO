@@ -22,7 +22,7 @@ class Sede(models.Model):
         suma = 0
         suma_dom = 0
         
-        dom = Domiciliarias.objects.filter(fecha=self.fecha)
+        dom = Domiciliarias.objects.filter(fecha=self.fecha).distinct()
 
         if dom:
             for d in dom:
